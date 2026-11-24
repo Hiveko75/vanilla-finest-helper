@@ -1,10 +1,8 @@
 # Builds every jar (one per Minecraft version) and uploads them as one artifact.
 name: Build
 
+# Started by hand only (Actions -> Run workflow): no builds on push or pull requests.
 on:
-  push:
-    branches: [main]
-  pull_request:
   workflow_dispatch:
 
 permissions:
