@@ -58,9 +58,11 @@ public final class HelperConfigScreen {
         for (Folder folder : Folder.values()) {
             if (!folder.active()) continue;
             Path shared = folder.shared();
-            String value = Folders.value(folder);
+            String value = Folders.current(folder);
             Place[] place = {placeOf(value, shared)};
             String[] other = {place[0] == Place.OTHER ? value : ""};
+            Place shownPlace = place[0];
+            String shownOther = other[0];
 
             category.addEntry(entries.startEnumSelector(Component.literal(folder.title), Place.class, place[0])
                     .setDefaultValue(Place.INSTANCE)
@@ -75,7 +77,10 @@ public final class HelperConfigScreen {
                     .setSaveConsumer(text -> other[0] = text.trim())
                     .build());
 
+            // Only a folder changed on this screen is written, so a folder set in the mod's own settings
+            // (Axiom's screen, for example) is never overwritten with what this screen showed.
             saves[i++] = () -> {
+                if (place[0] == shownPlace && (place[0] != Place.OTHER || other[0].equals(shownOther))) return;
                 switch (place[0]) {
                     case SHARED -> Folders.set(folder, shared != null ? shared.toString() : "");
                     case INSTANCE -> Folders.set(folder, "");

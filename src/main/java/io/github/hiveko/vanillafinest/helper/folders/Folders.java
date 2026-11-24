@@ -82,6 +82,20 @@ public final class Folders {
         return HelperSettings.get(folder.key, "").trim();
     }
 
+    /**
+     * The setting the mod uses right now, for the settings screen (the game is running then). For Axiom this
+     * is the value in Axiom's settings in memory, so a change made in Axiom's own screen that Axiom has not
+     * written to axiom.json yet is seen too; the file when Axiom's settings cannot be read. Not for use
+     * before the game has started (it touches Axiom's main class).
+     */
+    public static String current(Folder folder) {
+        if (folder == AXIOM) {
+            String live = axiomLiveCustomPath();
+            if (live != null) return live.trim();
+        }
+        return value(folder);
+    }
+
     public static void set(Folder folder, String value) {
         String text = value == null ? "" : value.trim();
         if (folder == AXIOM) {
@@ -121,6 +135,21 @@ public final class Folders {
         if (part == null || !part.isJsonObject()) return "";
         JsonElement path = part.getAsJsonObject().get("customPath");
         return path != null && path.isJsonPrimitive() ? path.getAsString().trim() : "";
+    }
+
+    /** Axiom's blueprint folder setting in memory, or null when Axiom is not running or is different. */
+    private static String axiomLiveCustomPath() {
+        if (!FabricLoader.getInstance().isModLoaded("axiom")) return null;
+        try {
+            Class<?> axiom = Class.forName("com.moulberry.axiom.Axiom", false, Folders.class.getClassLoader());
+            Object config = axiom.getField("configuration").get(null);
+            if (config == null) return null;
+            Object settings = config.getClass().getField("blueprint").get(config);
+            Object path = settings.getClass().getField("customPath").get(settings);
+            return path instanceof String text ? text : null;
+        } catch (ReflectiveOperationException | LinkageError | RuntimeException e) {
+            return null;
+        }
     }
 
     private static void setAxiomCustomPath(String text) {
