@@ -2,7 +2,7 @@ plugins {
     id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 }
 
-// Same shared sources as the 26.x builds, plus platform/mc1.21.11/ and modules/elytratrails-model/.
+// Same shared sources as the 26.x builds, plus platform/mc1.21.11/.
 def root = file('..')
 def rootProps = new Properties()
 new File(root, 'gradle.properties').withInputStream { rootProps.load(it) }
@@ -15,8 +15,7 @@ base {
 }
 
 sourceSets.main {
-    java.srcDirs = [new File(root, 'src/main/java'), new File(root, 'platform/mc1.21.11/java'),
-                    new File(root, 'modules/elytratrails-model/java')]
+    java.srcDirs = [new File(root, 'src/main/java'), new File(root, 'platform/mc1.21.11/java')]
     resources.srcDirs = [new File(root, 'src/main/resources'), new File(root, 'platform/mc1.21.11/resources')]
 }
 
@@ -33,8 +32,6 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    // Compile-only: Elytra Contrails 1.4.9 (Modrinth version 9KJRbgAa), for the Elytra Contrails module; not bundled.
-    modCompileOnly "maven.modrinth:elytra-contrails-mod:9KJRbgAa"
     // Compile-only: Mod Menu and Cloth Config (Modrinth versions Tyk71iSw, xuX40TN5), for the optional settings screen; not bundled.
     modCompileOnly("maven.modrinth:modmenu:Tyk71iSw") { transitive = false }
     modCompileOnly("maven.modrinth:cloth-config:xuX40TN5") { transitive = false }
@@ -42,7 +39,7 @@ dependencies {
 
 processResources {
     def props = [version: project.version, minecraft_range: project.minecraft_range,
-                 loader_min: project.loader_min, java_version: '21', provides: project.provides]
+                 loader_min: project.loader_min, java_version: '21']
     inputs.properties props
     filesMatching("fabric.mod.json") { expand props }
 }

@@ -3,7 +3,7 @@
   "id": "vanilla-finest-helper",
   "version": "${version}",
   "name": "Vanilla Finest Helper",
-  "description": "Small fixes and tweaks for the Vanilla Finest modpacks. Iris: turns Improved Transparency (Fabulous graphics on 1.21.1) back on when shaders are disabled, and on 26.3 fixes the enchantment glint crash. Better Clouds: toggle key, automatic Mellow cloud preset, clouds hidden behind Voxy terrain. Elytra Contrails: fewer trail checks. Touch'n Motion: riders look where the player faces with third-person camera mods. Atmospherics (26.3): no AirHaze crash with Improved Transparency. ImageIO: no temp file per image read. Voxy (26.2+): keeps Vulkan selected and switches Voxy off for that session. Home folders: on an instance's first start, Screenshot Gallery, Litematica and Flashback Settings are pointed at the shared Minecraft folder. Each module only runs when its mod is installed in a version it was made for.",
+  "description": "The players' side of the Vanilla Finest modpacks. Folders: where Flashback saves replays (without Flashback Settings) and where Axiom keeps blueprints, with a settings screen in Mod Menu (Cloth Config). Home folders (off by default): on an instance's first start, points Screenshot Gallery, Litematica, Flashback and Axiom at the shared Minecraft folder. Fixes for the packs' mods are in Vanilla Finest Fixes.",
   "authors": ["Hiveko"],
   "contact": {
     "sources": "https://github.com/Hiveko75/vanilla-finest-helper",
@@ -13,17 +13,13 @@
   "icon": "assets/vanilla-finest-helper/icon.png",
   "environment": "client",
   "entrypoints": {
-    "client": ["io.github.hiveko.vanillafinest.VanillaFinest"],
-    "preLaunch": ["io.github.hiveko.vanillafinest.homefolders.HomeFolders"],
-    "modmenu": ["io.github.hiveko.vanillafinest.config.ModMenuIntegration"]
+    "client": ["io.github.hiveko.vanillafinest.helper.VanillaFinestHelper"],
+    "preLaunch": ["io.github.hiveko.vanillafinest.helper.homefolders.HomeFolders"],
+    "modmenu": ["io.github.hiveko.vanillafinest.helper.config.ModMenuIntegration"]
   },
   "mixins": [
     {
       "config": "vanilla-finest-helper.mixins.json",
-      "environment": "client"
-    },
-    {
-      "config": "vanilla-finest-helper.optional.mixins.json",
       "environment": "client"
     }
   ],
@@ -36,9 +32,7 @@
     "fabric-api": "*"
   },
   "suggests": {
-    "iris": "*",
-    "betterclouds": "*",
-    "voxy": "*"
-  },
-  "provides": [${provides}]
+    "modmenu": "*",
+    "cloth-config": "*"
+  }
 }

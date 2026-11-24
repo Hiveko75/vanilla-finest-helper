@@ -1,18 +1,10 @@
 {
-  "required": true,
-  "package": "io.github.hiveko.vanillafinest.mixin",
-  "plugin": "io.github.hiveko.vanillafinest.MixinPlugin",
+  "required": false,
+  "package": "io.github.hiveko.vanillafinest.helper.mixin",
+  "plugin": "io.github.hiveko.vanillafinest.helper.MixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "iris.OptionInstanceAccessor",
-    "iris.OptionInstanceMixin",
-    "iris.LevelExtractorMixin",
-    "iris.GlintTexturesMixin",
-    "voxy.MinecraftDeviceMixin",
-    "voxy.VoxyClientMixin",
-    "elytratrails.TrailManagerMixin",
-    "touchnmotion.ShoulderCameraMixin",
-    "atmospherics.QuadParticleFeatureRendererMixin"
+    "folders.FlashbackMixin"
   ],
   "injectors": {
     "defaultRequire": 1

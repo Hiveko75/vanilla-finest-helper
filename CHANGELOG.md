@@ -1,47 +1,17 @@
 # Changelog
 
-## 1.1.1 (2026-11-23)
+## 1.0.0 (not released yet)
 
-- **Home folders is now off by default:** screenshots, schematics, replays and blueprints stay in the
-  instance's own folders. Set `homefolders.enabled=true` in `config/vanilla-finest-helper.properties`
-  to use the shared Minecraft folder as before. Instances where it already ran keep their folders.
-- **Fixed: the game did not start with Axiom installed** (1.1.0, every Minecraft version: "AxiomMixin …
-  target com.moulberry.axiom.Axiom was loaded too early"). Axiom's own mixin plugin loads its main class
-  before other mods' mixins are prepared, so the helper's hook on it could never work. Axiom has its own
-  blueprint folder setting (`blueprint.customPath` in `config/axiom/axiom.json`), so the Folders module
-  now writes that instead, from Home folders and from the settings screen. A folder 1.1.0 noted for Axiom
-  is carried over.
-- The Flashback replay-folder hook is now in its own, non-required mixin configuration: if a mod ever
-  loads Flashback's class too early, the hook is skipped (error in the log) instead of stopping the game.
-- **Voxy (26.3, 26.2): shader packs' distant-terrain shaders compile again when the pack uses a value
-  Iris does not provide on this Minecraft version.** Complementary r5.10 (also with Euphoria Patches)
-  uses `inIceCaves` on 26.3, a biome that only exists from 26.4, so Voxy's shader failed ("undefined
-  variable"), distant terrain was drawn without the shader pack and an error appeared in chat. Such
-  values are now set to 0, the pack's own default; shaders that already compile are not changed.
+First version as the players' side of the Vanilla Finest modpacks. The earlier helper builds (never
+published) also held the fixes for the packs' mods; those moved to Vanilla Finest Fixes.
 
-## 1.1.0 (2026-11-23)
-
-- **Folders (new, all versions):** two folders that their mods have no setting for can now be chosen.
-  - **Flashback:** where replays are saved and listed. Flashback 0.43.6 (26.3, 26.2), 0.43.3 (26.1.2) and 0.39.10 (1.21.11, 1.21.1). When Flashback Settings is installed (26.3, 26.2), it keeps doing this with its own setting, and the helper stays out of it.
-  - **Axiom 6.1.5:** its blueprint folder (otherwise always `config/axiom/blueprints` in the instance).
-  - The **Home folders** module points both at the shared Minecraft folder once (`.minecraft/flashback/replays`, `.minecraft/axiom/blueprints`): on the first start of a new instance, and once in instances where it already ran before.
-  - To change them, or to go back to the mod's own folder in the instance: **Mod Menu → Vanilla Finest Helper → Configure** (needs Cloth Config), with the choices "Shared Minecraft folder", "This instance (the mod's own)" and "Another folder". Or edit `config/vanilla-finest-helper.properties` (`folder.flashback.replays`, `folder.axiom.blueprints`; empty means the mod's own folder). Files are never moved. Flashback uses a change at once, Axiom after a restart.
-- **License:** all rights reserved (was MIT; no version had been given out).
-- The helper's settings now share one file, `config/vanilla-finest-helper.properties`; the Iris transparency flag no longer overwrites other settings in it.
-
-## 1.0.0 (2026-11-22)
-
-First version. Combines Better Clouds Toggle 1.2.1, Iris Glint Fix, Voxy Disabler on Vulkan 1.0.1 and Particle Transparency Fix into one mod for Minecraft 1.21.1, 1.21.11, 26.1.2, 26.2 and 26.3, with new fixes for Iris, Elytra Contrails, Touch'n Motion and ImageIO, and a new Home folders module. Each module only runs when its mod is installed in a version the module was made for (exact version for modules that patch a mod or work around a bug of one version, same minor version for modules that only read a mod's settings), and the log lists the active modules at start-up ("... module active") and says why a module is off when its mod has another version.
-
-- **Iris:** better transparency comes back after shaders. Iris switches Improved Transparency (Fabulous! graphics on 1.21.1) off for shaders and never back on; it is now switched back on when shaders are disabled, if it was on before. New in all versions.
-- **Iris, 26.3:** the enchantment glint crash fix from Iris Glint Fix 1.0.0 ([IrisShaders/Iris#3390](https://github.com/IrisShaders/Iris/issues/3390)).
-- **Better Clouds:** toggle key, automatic "Mellow (auto)" cloud preset and Voxy cloud depth from Better Clouds Toggle 1.2.1. The key binding keeps its name, so existing bindings carry over. With Better Clouds 1.13.x (Minecraft 26.1.2, 1.21.11, 1.21.1), which has no Voxy support to switch on, the log says so in one line.
-- **Elytra Contrails:** fewer trail checks. Player trails loop over players only, and players or entities whose trails are all switched off (for example with "Enable Other's Trails" off) are no longer sampled up to 60 times per second. The second player-model render that looks for EMF trail spawner bones is skipped while the player model has none (rechecked every 5 s); in a spark profile that was more than half of Elytra Contrails' cost. Entities with trails on, like arrows with Arrow Trails, are unchanged. Made for Elytra Contrails 1.6.10 (26.3), 1.6.9 (26.2), 1.5.1 (26.1.2), 1.4.9 (1.21.11) and 1.4.7.5 (1.21.1, player trails only, no model search).
-- **Touch'n Motion 1.0.5:** a seated or riding player's head follows the player's own facing again instead of the camera direction, so riders no longer look the wrong way with Leawind's Third Person or shoulder cameras (Shoulder Surfing included).
-- **ImageIO (always on):** ImageIO's disk cache is turned off at start-up, so mods reading textures through ImageIO (like Xaero's World Map colouring new blocks) no longer create a temp file on disk per image on the render thread.
-- **Atmospherics 2.6.8, 26.3:** Improved Transparency pipelines for Atmospherics' AirHaze particles, which crash the game without them ("OIT pipeline set for particle layer not specified"). Replaces the separate Particle Transparency Fix mod.
-- **Voxy, 26.2 and 26.3:** keeps Vulkan selected and switches Voxy off for that session, from Voxy Disabler on Vulkan 1.0.1.
-- **Home folders (all versions):** the first time an instance starts, the folder settings of three mods are pointed at the player's shared Minecraft folder (the launcher's `.minecraft`; found like One World Folder finds it, on Windows, macOS and Linux), so all instances use the same folders: **Screenshot Gallery** 2.x saves and shows screenshots in `<minecraft>/screenshots`, **Litematica** uses `<minecraft>/schematics`, and **Flashback Settings** puts Flashback's replays in `<minecraft>/flashback/replays`. It runs once per instance (it leaves the file `config/vanilla-finest-helper.home-folders.done`) and never changes these settings again; a folder the player already chose, which exists on the computer, is kept. Only mods that are installed are touched, and nothing is changed when there is no Minecraft folder. With that Screenshot Gallery setting, new screenshots are also saved there.
-- **Icon:** the Vanilla Finest icon (the same as the Vanilla Finest resource pack) in Mod Menu and the launcher.
-
-Replaces the separate mods (Better Clouds Toggle, Iris Glint Fix, Voxy Disabler on Vulkan, Particle Transparency Fix); Fabric won't load it together with them. Client-side only. Every mod it works with, and Fabric API, is optional.
+- **Folders (all versions):** where Flashback saves and lists replays (without Flashback Settings; the
+  helper redirects `Flashback.getReplayFolder`) and where Axiom keeps blueprints (Axiom's own
+  `blueprint.customPath` setting in `config/axiom/axiom.json`, which the helper writes). Empty means the
+  mod's own folder in the instance. Settings screen: Mod Menu → Vanilla Finest Helper → Configure (with
+  Cloth Config): shared Minecraft folder, this instance, or another folder.
+- **Home folders (all versions), off by default:** with `homefolders.enabled=true` in
+  `config/vanilla-finest-helper.properties`, the first start of an instance points Screenshot Gallery
+  (2.x), Litematica, Flashback (Flashback Settings, or the Folders setting) and Axiom at the shared
+  Minecraft folder (`.minecraft`, found like One World Folder finds it). It runs once per instance and
+  keeps a folder the player already chose.

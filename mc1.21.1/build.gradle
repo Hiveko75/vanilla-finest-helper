@@ -32,8 +32,6 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    // Compile-only: Elytra Contrails 1.4.7.5 (Modrinth version 26ZE7cvJ), for the Elytra Contrails module; not bundled.
-    modCompileOnly "maven.modrinth:elytra-contrails-mod:26ZE7cvJ"
     // Compile-only: Mod Menu and Cloth Config (Modrinth versions 6lgOkclV, HpMb5wGb), for the optional settings screen; not bundled.
     modCompileOnly("maven.modrinth:modmenu:6lgOkclV") { transitive = false }
     modCompileOnly("maven.modrinth:cloth-config:HpMb5wGb") { transitive = false }
@@ -41,7 +39,7 @@ dependencies {
 
 processResources {
     def props = [version: project.version, minecraft_range: project.minecraft_range,
-                 loader_min: project.loader_min, java_version: '21', provides: project.provides]
+                 loader_min: project.loader_min, java_version: '21']
     inputs.properties props
     filesMatching("fabric.mod.json") { expand props }
 }

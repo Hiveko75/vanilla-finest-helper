@@ -14,7 +14,7 @@ base {
 }
 
 sourceSets.main {
-    java.srcDirs += ['platform/mc26/java', "platform/mc${mc}/java", 'modules/elytratrails-model/java']
+    java.srcDirs += ["platform/mc${mc}/java"]
     resources.srcDirs += ["platform/mc${mc}/resources"]
 }
 
@@ -30,9 +30,8 @@ dependencies {
     minecraft "com.mojang:minecraft:${v.minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${v.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${v.fabric_version}"
-    // Iris, Better Clouds and Voxy are not needed at compile time: they are reached by name at run time.
-    // Elytra Contrails is needed to compile the Elytra Contrails module (elytratrails= line); not bundled.
-    compileOnly(v.elytratrails)
+    // Flashback and Axiom are not needed at compile time: Flashback is targeted by name, Axiom's settings
+    // file is written as JSON and its running setting is reached by reflection.
     // Mod Menu and Cloth Config: only for the optional settings screen; not bundled.
     compileOnly(v.modmenu) { transitive = false }
     compileOnly(v.clothconfig) { transitive = false }
@@ -40,7 +39,7 @@ dependencies {
 
 processResources {
     def props = [version: project.version, minecraft_range: v.minecraft_range,
-                 loader_min: v.loader_min, java_version: '25', provides: v.provides]
+                 loader_min: v.loader_min, java_version: '25']
     inputs.properties props
     filesMatching("fabric.mod.json") { expand props }
 }
