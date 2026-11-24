@@ -66,7 +66,7 @@ Two more folders the helper sets, with a settings screen:
   above). For Axiom, a folder already set in Axiom's settings is kept. By default both stay empty
   (the instance's own folders).
 - **Settings screen:** Mod Menu → Vanilla Finest Helper → Configure, when Cloth Config is installed.
-  Per folder: "Modpack folder" (the mod's own folder in this instance, the default), "Minecraft"
+  Per folder: "Modpack" (the mod's own folder in this instance, the default), "Minecraft"
   (the launcher's .minecraft folder) or "Another folder" with a path.
   Without Cloth Config there is no Configure button; the files still work. Axiom's own settings screen
   shows and changes the same Axiom setting.

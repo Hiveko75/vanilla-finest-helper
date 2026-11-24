@@ -21,7 +21,7 @@ public final class HelperConfigScreen {
     private HelperConfigScreen() {}
 
     public enum Place {
-        INSTANCE("Modpack folder"),
+        INSTANCE("Modpack"),
         SHARED("Minecraft"),
         OTHER("Another folder");
 
@@ -48,7 +48,7 @@ public final class HelperConfigScreen {
         ConfigCategory category = builder.getOrCreateCategory(Component.literal("Folders"));
 
         category.addEntry(entries.startTextDescription(Component.literal(
-                "Folders for mods that have no setting of their own. Modpack folder (the default) keeps the files in "
+                "Folders for mods that have no setting of their own. Modpack (the default) keeps the files in "
                         + "this instance; Minecraft is the launcher's .minecraft folder, so every instance uses the same "
                         + "files. Files are never moved."))
                 .build());
@@ -104,7 +104,7 @@ public final class HelperConfigScreen {
                 : "config\\axiom\\blueprints in this instance";
         String when = folder == Folders.FLASHBACK ? "A change counts at once." : "A change counts after a restart.";
         return new Component[] {
-                Component.literal("Modpack folder: " + own),
+                Component.literal("Modpack: " + own),
                 Component.literal("Minecraft: " + (shared != null ? shared : "not found on this computer")),
                 Component.literal(when)
         };
