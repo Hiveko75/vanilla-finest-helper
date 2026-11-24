@@ -41,6 +41,7 @@ jobs:
         with:
           name: jar-${{ matrix.target }}
           path: dist/*.jar
+          retention-days: 14
 
   collect:
     needs: build
@@ -56,3 +57,4 @@ jobs:
         with:
           name: vanilla-finest-helper
           path: dist/*.jar
+          retention-days: 14
