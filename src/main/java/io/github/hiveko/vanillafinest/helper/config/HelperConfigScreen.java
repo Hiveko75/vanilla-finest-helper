@@ -13,15 +13,16 @@ import net.minecraft.network.chat.Component;
 
 /**
  * The helper's settings screen (Cloth Config, opened from Mod Menu). For each folder of the Folders
- * module: where it is (shared Minecraft folder, the mod's own folder in this instance, or another
- * folder) and, for "another folder", the path. Saving writes config/vanilla-finest-helper.properties.
+ * module: where it is (the modpack folder, i.e. the mod's own folder in this instance, which is the
+ * default; the shared .minecraft folder; or another folder) and, for "another folder", the path. Saving
+ * writes config/vanilla-finest-helper.properties.
  */
 public final class HelperConfigScreen {
     private HelperConfigScreen() {}
 
     public enum Place {
-        SHARED("Shared Minecraft folder"),
-        INSTANCE("This instance (the mod's own)"),
+        INSTANCE("Modpack folder"),
+        SHARED(".minecraft folder"),
         OTHER("Another folder");
 
         final String label;
@@ -47,8 +48,9 @@ public final class HelperConfigScreen {
         ConfigCategory category = builder.getOrCreateCategory(Component.literal("Folders"));
 
         category.addEntry(entries.startTextDescription(Component.literal(
-                "Folders for mods that have no setting of their own. The shared Minecraft folder is the launcher's "
-                        + ".minecraft folder, so every instance uses the same files. Files are never moved."))
+                "Folders for mods that have no setting of their own. Modpack folder (the default) keeps the files in "
+                        + "this instance; the .minecraft folder is the launcher's folder, so every instance uses the same "
+                        + "files. Files are never moved."))
                 .build());
 
         Runnable[] saves = new Runnable[Folder.values().length];
@@ -61,7 +63,7 @@ public final class HelperConfigScreen {
             String[] other = {place[0] == Place.OTHER ? value : ""};
 
             category.addEntry(entries.startEnumSelector(Component.literal(folder.title), Place.class, place[0])
-                    .setDefaultValue(shared != null ? Place.SHARED : Place.INSTANCE)
+                    .setDefaultValue(Place.INSTANCE)
                     .setEnumNameProvider(p -> Component.literal(((Place) p).label))
                     .setTooltip(tooltip(folder, shared))
                     .setSaveConsumer(p -> place[0] = p)
@@ -102,8 +104,8 @@ public final class HelperConfigScreen {
                 : "config\\axiom\\blueprints in this instance";
         String when = folder == Folders.FLASHBACK ? "A change counts at once." : "A change counts after a restart.";
         return new Component[] {
-                Component.literal("Shared Minecraft folder: " + (shared != null ? shared : "not found on this computer")),
-                Component.literal("This instance: " + own),
+                Component.literal("Modpack folder: " + own),
+                Component.literal(".minecraft folder: " + (shared != null ? shared : "not found on this computer")),
                 Component.literal(when)
         };
     }
