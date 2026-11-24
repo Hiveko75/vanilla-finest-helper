@@ -14,7 +14,7 @@ import net.minecraft.network.chat.Component;
 /**
  * The helper's settings screen (Cloth Config, opened from Mod Menu). For each folder of the Folders
  * module: where it is (the modpack folder, i.e. the mod's own folder in this instance, which is the
- * default; the shared .minecraft folder; or another folder) and, for "another folder", the path. Saving
+ * default; Minecraft, the launcher's shared .minecraft folder; or another folder) and, for "another folder", the path. Saving
  * writes config/vanilla-finest-helper.properties.
  */
 public final class HelperConfigScreen {
@@ -22,7 +22,7 @@ public final class HelperConfigScreen {
 
     public enum Place {
         INSTANCE("Modpack folder"),
-        SHARED(".minecraft folder"),
+        SHARED("Minecraft"),
         OTHER("Another folder");
 
         final String label;
@@ -49,7 +49,7 @@ public final class HelperConfigScreen {
 
         category.addEntry(entries.startTextDescription(Component.literal(
                 "Folders for mods that have no setting of their own. Modpack folder (the default) keeps the files in "
-                        + "this instance; the .minecraft folder is the launcher's folder, so every instance uses the same "
+                        + "this instance; Minecraft is the launcher's .minecraft folder, so every instance uses the same "
                         + "files. Files are never moved."))
                 .build());
 
@@ -105,7 +105,7 @@ public final class HelperConfigScreen {
         String when = folder == Folders.FLASHBACK ? "A change counts at once." : "A change counts after a restart.";
         return new Component[] {
                 Component.literal("Modpack folder: " + own),
-                Component.literal(".minecraft folder: " + (shared != null ? shared : "not found on this computer")),
+                Component.literal("Minecraft: " + (shared != null ? shared : "not found on this computer")),
                 Component.literal(when)
         };
     }
