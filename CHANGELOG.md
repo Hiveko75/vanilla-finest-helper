@@ -8,10 +8,9 @@ published) also held the fixes for the packs' mods; those moved to Vanilla Fines
 - **Folders (all versions):** where Flashback saves and lists replays (without Flashback Settings; the
   helper redirects `Flashback.getReplayFolder`) and where Axiom keeps blueprints (Axiom's own
   `blueprint.customPath` setting in `config/axiom/axiom.json`, which the helper writes). Empty means the
-  mod's own folder in the instance. Settings screen: Mod Menu → Vanilla Finest Helper → Configure (with
-  Cloth Config): Modpack (the default, this instance), Minecraft (the launcher's .minecraft folder) or
-  another folder. Saving writes only the folders changed on that screen, and the screen shows Axiom's
-  current setting, so a folder chosen in Axiom's own settings is never overwritten.
+  mod's own folder in the instance. No settings screen of its own and no Mod Menu or Cloth Config
+  dependency: the setup screen (not built yet) will set these folders, and Mod Menu's Configure button
+  will open it.
 - **Home folders (all versions), off by default:** with `homefolders.enabled=true` in
   `config/vanilla-finest-helper.properties`, the first start of an instance points Screenshot Gallery
   (2.x), Litematica, Flashback (Flashback Settings, or the Folders setting) and Axiom at the shared

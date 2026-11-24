@@ -19,22 +19,11 @@ sourceSets.main {
     resources.srcDirs = [new File(root, 'src/main/resources'), new File(root, 'platform/mc1.21.11/resources')]
 }
 
-repositories {
-    maven {
-        name = 'Modrinth'
-        url = 'https://api.modrinth.com/maven'
-        content { includeGroup 'maven.modrinth' }
-    }
-}
-
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    // Compile-only: Mod Menu and Cloth Config (Modrinth versions Tyk71iSw, xuX40TN5), for the optional settings screen; not bundled.
-    modCompileOnly("maven.modrinth:modmenu:Tyk71iSw") { transitive = false }
-    modCompileOnly("maven.modrinth:cloth-config:xuX40TN5") { transitive = false }
 }
 
 processResources {

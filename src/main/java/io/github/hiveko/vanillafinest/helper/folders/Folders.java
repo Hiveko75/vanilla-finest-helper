@@ -21,7 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Folders module: two more folders the helper sets, with its settings screen (Mod Menu, with Cloth Config).
+ * Folders module: two more folders the helper sets, from config/vanilla-finest-helper.properties and
+ * Axiom's own settings (the setup screen will set them too; the helper has no separate settings screen).
  * <ul>
  *   <li>{@link #FLASHBACK}: where Flashback saves and lists replays. Flashback has no setting for it, so
  *       the helper redirects it (FlashbackMixin); the value is one line in
@@ -83,7 +84,7 @@ public final class Folders {
     }
 
     /**
-     * The setting the mod uses right now, for the settings screen (the game is running then). For Axiom this
+     * The setting the mod uses right now, for the setup screen (the game is running then). For Axiom this
      * is the value in Axiom's settings in memory, so a change made in Axiom's own screen that Axiom has not
      * written to axiom.json yet is seen too; the file when Axiom's settings cannot be read. Not for use
      * before the game has started (it touches Axiom's main class).

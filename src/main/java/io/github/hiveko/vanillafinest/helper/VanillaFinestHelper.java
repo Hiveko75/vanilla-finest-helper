@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
  *       points Screenshot Gallery, Litematica, Flashback and Axiom at the shared Minecraft folder. Runs
  *       before launch ({@code preLaunch} entrypoint), not from here.</li>
  *   <li><b>Folders</b> (folders/, all versions): Flashback's replay folder (without Flashback Settings)
- *       and Axiom's blueprint folder, from the helper's settings. Settings screen in config/ (Mod Menu
- *       with Cloth Config).</li>
+ *       and Axiom's blueprint folder, from the helper's settings (config/vanilla-finest-helper.properties;
+ *       the setup screen will set them too).</li>
  * </ul>
  * A folder is only handled when its mod is installed in a version the module was made for
  * ({@link ModuleCheck}); the log lists the active folders at start-up.

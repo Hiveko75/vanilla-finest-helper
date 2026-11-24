@@ -53,7 +53,7 @@ mods at the player's shared Minecraft folder, so all instances use the same fold
 
 ## Folders module (Flashback, Axiom)
 
-Two more folders the helper sets, with a settings screen:
+Two more folders the helper sets:
 
 | Mod | Folder | How | Versions |
 |---|---|---|---|
@@ -65,16 +65,14 @@ Two more folders the helper sets, with a settings screen:
 - When switched on, the Home folders module sets both to the shared Minecraft folder once (see
   above). For Axiom, a folder already set in Axiom's settings is kept. By default both stay empty
   (the instance's own folders).
-- **Settings screen:** Mod Menu → Vanilla Finest Helper → Configure, when Cloth Config is installed.
-  Per folder: "Modpack" (the mod's own folder in this instance, the default), "Minecraft"
-  (the launcher's .minecraft folder) or "Another folder" with a path.
-  Without Cloth Config there is no Configure button; the files still work. Axiom's own settings screen
-  shows and changes the same Axiom setting.
+- **No settings screen of its own:** the setup screen (not built yet) will set these folders, and Mod
+  Menu's Configure button for the helper will open that same setup screen. Until then the folders are
+  set in the files above; Axiom's own settings screen shows and changes the same Axiom setting.
 - Flashback reads the setting each time (a change counts at once); Axiom only at start-up.
 - When Flashback Settings is installed (26.3, 26.2), its own setting decides the replay folder and the
   helper's Flashback hook is not applied.
 - Files are never moved: replays or blueprints already saved stay where they are.
-- The Flashback hook is in its own mixin configuration (`vanilla-finest-helper.optional.mixins.json`,
+- The Flashback hook is in its own mixin configuration (`vanilla-finest-helper.mixins.json`,
   not required), so if another mod ever loads Flashback's class too early, the hook is skipped with an
   error in the log instead of stopping the game. Axiom cannot be hooked at all: its mixin plugin loads
   Axiom's main class before other mods' mixins are prepared (that crashed 1.1.0 at start-up).

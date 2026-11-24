@@ -3,7 +3,7 @@
   "id": "vanilla-finest-helper",
   "version": "${version}",
   "name": "Vanilla Finest Helper",
-  "description": "The players' side of the Vanilla Finest modpacks. Folders: where Flashback saves replays (without Flashback Settings) and where Axiom keeps blueprints, with a settings screen in Mod Menu (Cloth Config). Home folders (off by default): on an instance's first start, points Screenshot Gallery, Litematica, Flashback and Axiom at the shared Minecraft folder. Fixes for the packs' mods are in Vanilla Finest Fixes.",
+  "description": "The players' side of the Vanilla Finest modpacks. Folders: where Flashback saves replays (without Flashback Settings) and where Axiom keeps blueprints. Home folders (off by default): on an instance's first start, points Screenshot Gallery, Litematica, Flashback and Axiom at the shared Minecraft folder. Fixes for the packs' mods are in Vanilla Finest Fixes.",
   "authors": ["Hiveko"],
   "contact": {
     "sources": "https://github.com/Hiveko75/vanilla-finest-helper",
@@ -14,8 +14,7 @@
   "environment": "client",
   "entrypoints": {
     "client": ["io.github.hiveko.vanillafinest.helper.VanillaFinestHelper"],
-    "preLaunch": ["io.github.hiveko.vanillafinest.helper.homefolders.HomeFolders"],
-    "modmenu": ["io.github.hiveko.vanillafinest.helper.config.ModMenuIntegration"]
+    "preLaunch": ["io.github.hiveko.vanillafinest.helper.homefolders.HomeFolders"]
   },
   "mixins": [
     {
@@ -30,9 +29,5 @@
   },
   "recommends": {
     "fabric-api": "*"
-  },
-  "suggests": {
-    "modmenu": "*",
-    "cloth-config": "*"
   }
 }
