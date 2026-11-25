@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -28,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The Look page's data: the pack's resource pack profiles (Packed Packs' {@code *.profile.json} files, in
- * Packed Packs' order) and the shaders offered for each profile ({@code look.json}).
+ * Packed Packs' order) and the shader packs in Iris's shaderpacks folder.
  */
 final class Look {
     private static final Logger LOGGER = LoggerFactory.getLogger("Vanilla Finest Helper");
@@ -36,8 +35,13 @@ final class Look {
     /** A resource pack profile: file name (id), display name, description lines, packs top first. */
     record Profile(String id, String name, String description, List<String> packIds) {}
 
-    /** A shader choice: id (for the texts), the shader pack file ("" = no shaders). */
-    record Shader(String id, String file) {
+    /**
+     * A shader choice: the shader pack's name in the shaderpacks folder ("" = no shaders), the name shown
+     * (may hold § colour codes from Iris Shader Folder) and its tooltip ("" = none).
+     */
+    record Shader(String file, String name, String tooltip) {
+        static final Shader NONE = new Shader("", "", "");
+
         boolean none() {
             return file.isEmpty();
         }
@@ -154,31 +158,26 @@ final class Look {
     // ---------------------------------------------------------------- shaders
 
     /**
-     * The shaders offered for a profile: look.json's first "profiles" rule whose "match" fits the profile's
-     * file name ("*" = any), keeping only the shader packs that are in the shaderpacks folder ("none" always).
+     * Every shader pack in Iris's shaderpacks folder, in Iris's list order. With Iris Shader Folder, its
+     * filter and order are used, and its names, colours and tooltips (config/iris_shader_folder.properties).
+     * "No shaders" comes last (the lightest choice). The active pack is always in the list.
      */
-    static List<Shader> shadersFor(Profile profile, JsonObject look) {
+    static List<Shader> shaders() {
+        List<String> packs = Integrations.Iris.packs();
+        if (Integrations.ShaderFolder.installed()) packs = Integrations.ShaderFolder.arrange(packs);
+        String active = Integrations.Iris.pack();
+        if (!active.isEmpty() && !packs.contains(active) && Integrations.Iris.enabled()) packs.add(active);
         List<Shader> out = new ArrayList<>();
-        JsonObject files = look.has("shaders") && look.get("shaders").isJsonObject() ? look.getAsJsonObject("shaders") : new JsonObject();
-        JsonArray rules = look.has("profiles") && look.get("profiles").isJsonArray() ? look.getAsJsonArray("profiles") : new JsonArray();
-        for (JsonElement r : rules) {
-            if (!r.isJsonObject()) continue;
-            JsonObject rule = r.getAsJsonObject();
-            String match = rule.has("match") ? rule.get("match").getAsString() : "*";
-            if (profile != null && !matches(match, profile.id())) continue;
-            for (JsonElement s : rule.getAsJsonArray("shaders")) {
-                String id = s.getAsString();
-                if (id.equals("none")) {
-                    out.add(new Shader("none", ""));
-                    continue;
-                }
-                String pattern = files.has(id) ? files.get(id).getAsString() : null;
-                String file = pattern == null ? null : findShader(pattern);
-                if (file != null) out.add(new Shader(id, file));
+        for (String file : packs) {
+            String name = withoutZip(file);
+            String tooltip = "";
+            if (Integrations.ShaderFolder.installed()) {
+                name = Integrations.ShaderFolder.name(file);
+                tooltip = Integrations.ShaderFolder.tooltip(file);
             }
-            break;
+            out.add(new Shader(file, name, tooltip));
         }
-        if (out.isEmpty()) out.add(new Shader("none", ""));
+        out.add(Shader.NONE);
         return out;
     }
 
@@ -192,31 +191,9 @@ final class Look {
         return null;
     }
 
-    /** The newest file in the shaderpacks folder matching the pattern ("ComplementaryReimagined_*.zip"). */
-    private static String findShader(String pattern) {
-        Path dir = Integrations.Iris.folder();
-        if (!Files.isDirectory(dir)) return null;
-        String best = null;
-        try (DirectoryStream<Path> files = Files.newDirectoryStream(dir)) {
-            for (Path f : files) {
-                String name = f.getFileName().toString();
-                if (matches(pattern, name) && (best == null || name.compareToIgnoreCase(best) > 0)) best = name;
-            }
-        } catch (IOException e) {
-            return null;
-        }
-        return best;
-    }
-
-    /** Simple wildcards: * any text, ? one character; case-insensitive. */
-    static boolean matches(String pattern, String name) {
-        StringBuilder regex = new StringBuilder();
-        for (char c : pattern.toCharArray()) {
-            if (c == '*') regex.append(".*");
-            else if (c == '?') regex.append('.');
-            else regex.append(java.util.regex.Pattern.quote(String.valueOf(c)));
-        }
-        return java.util.regex.Pattern.compile(regex.toString(), java.util.regex.Pattern.CASE_INSENSITIVE).matcher(name).matches();
+    static String withoutZip(String name) {
+        return name.regionMatches(true, Math.max(0, name.length() - 4), ".zip", 0, 4) && name.length() > 4
+                ? name.substring(0, name.length() - 4) : name;
     }
 
     private static JsonObject readJson(Path file) {

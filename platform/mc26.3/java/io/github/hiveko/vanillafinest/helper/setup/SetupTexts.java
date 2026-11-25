@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
  *   <li>{@code <lang>.json}: labels and hints. English is the base; the game's language is laid over it
  *       (jar first, then the config folder), so a missing text falls back to English.</li>
  *   <li>{@code welcome.md} / {@code welcome.<lang>.md}: the Welcome page ({@link Markdown}).</li>
- *   <li>{@code look.json}: which shaders the Look page offers for which profile.</li>
  * </ul>
  */
 public final class SetupTexts {
@@ -91,14 +90,6 @@ public final class SetupTexts {
         String text = readText("welcome." + lang + ".md");
         if (text == null) text = readText("welcome.md");
         return text == null ? "" : text;
-    }
-
-    /** look.json: the config folder's copy when there is one, else the jar's. */
-    public static JsonObject look() {
-        JsonObject fromConfig = readFile(configDir().resolve("look.json"));
-        if (fromConfig != null) return fromConfig;
-        JsonObject fromJar = readJar("look.json");
-        return fromJar != null ? fromJar : new JsonObject();
     }
 
     // ---------------------------------------------------------------- reading

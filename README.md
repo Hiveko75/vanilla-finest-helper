@@ -17,12 +17,16 @@ screens, and from Mod Menu's Configure button.
 - Minecraft's own settings (languages, mouse, key bindings, graphics API, render distance, GUI scale)
   apply at once, as in Options. Voxy, the folders and the look are applied with ✔.
 - Every other mod is optional and reached by name: Language Reload (several languages), Multi Key
-  Bindings (profile name), Keycaps (Keyboard Map), Voxy, Iris, Packed Packs (profiles), Screenshot
-  Gallery, Litematica, Flashback (Settings), Axiom, EaseGUI (animations kept off this screen).
+  Bindings (profile name), Keycaps (Keyboard Map), Voxy, Iris, Iris Shader Folder, Packed Packs
+  (profiles), Screenshot Gallery, Litematica, Flashback (Settings), Axiom, EaseGUI (animations kept off
+  this screen).
 - Texts: `assets/vanilla-finest-helper/setup/<language>.json` and `welcome.md` / `welcome.<language>.md`
   in the jar (English and Hungarian); a file with the same name in `config/vanilla-finest-helper/setup/`
   wins, so the wording changes without a new build. `{key:<key binding id>}` (or `{key:minihud:<hotkey>}`
-  for malilib) shows a key's current name. `look.json` says which shaders each profile offers.
+  for malilib) shows a key's current name.
+- Look page: "Style" is the Packed Packs profile; "Shaders" lists every shader pack in Iris's folder.
+  With Iris Shader Folder installed, the list uses its filter, order, colours and tooltips
+  (`config/iris_shader_folder.properties`), the same as Iris's own shader list.
 
 ## GUI scale module (26.3 for now)
 

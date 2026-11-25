@@ -68,6 +68,7 @@
   "folders.row.replays": "Flashback replays",
   "folders.row.blueprints": "Axiom blueprints",
 
+  "look.profile": "Style: %s",
   "look.noprofiles": "No resource pack profiles found (Packed Packs).",
   "look.profile.tooltip": "The resource pack profile: textures, animations and sounds.",
   "look.shaders": "Shaders: %s",
@@ -77,17 +78,7 @@
   "look.preview.soon": "(pictures come in a later version)",
 
   "shader.none": "None",
-  "shader.none.desc": "No shaders: the profile as it is, fastest.",
-  "shader.complementary_reimagined": "Complementary Reimagined",
-  "shader.complementary_reimagined.desc": "Vanilla-style shaders: real shadows, soft light and reflective water.",
-  "shader.complementary_unbound": "Complementary Unbound",
-  "shader.complementary_unbound.desc": "Complementary's more realistic style, made for the Unbound profiles' sun and moon.",
-  "shader.bliss": "Bliss",
-  "shader.bliss.desc": "Soft, colourful light with a classic medieval mood.",
-  "shader.eclipse": "Eclipse",
-  "shader.eclipse.desc": "Deep, dramatic light with a classic medieval mood.",
-  "shader.mellow": "Mellow",
-  "shader.mellow.desc": "Calm, warm light.",
+  "shader.none.desc": "No shaders: the style as it is. The lightest choice.",
 
   "ready.box.title": "Your choices",
   "ready.languages": "Languages",

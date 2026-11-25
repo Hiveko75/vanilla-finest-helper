@@ -65,6 +65,7 @@
   "folders.row.replays": "Flashback-felvételek",
   "folders.row.blueprints": "Axiom-tervrajzok",
 
+  "look.profile": "Stílus: %s",
   "look.noprofiles": "Nem található erőforráscsomag-profil (Packed Packs).",
   "look.profile.tooltip": "Az erőforráscsomag-profil: textúrák, animációk és hangok.",
   "look.shaders": "Shaderek: %s",
@@ -74,12 +75,7 @@
   "look.preview.soon": "(a képek egy későbbi verzióban jönnek)",
 
   "shader.none": "Nincs",
-  "shader.none.desc": "Shaderek nélkül: a profil úgy, ahogy van, a leggyorsabb.",
-  "shader.complementary_reimagined.desc": "Vanilla stílusú shader: valódi árnyékok, lágy fények és tükröződő víz.",
-  "shader.complementary_unbound.desc": "A Complementary valósághűbb stílusa, az Unbound profilok napjához és holdjához.",
-  "shader.bliss.desc": "Lágy, színes fények, klasszikus középkori hangulattal.",
-  "shader.eclipse.desc": "Mély, drámai fények, klasszikus középkori hangulattal.",
-  "shader.mellow.desc": "Nyugodt, meleg fények.",
+  "shader.none.desc": "Shaderek nélkül: a stílus úgy, ahogy van. A legkönnyebb választás.",
 
   "ready.box.title": "A választásaid",
   "ready.languages": "Nyelvek",

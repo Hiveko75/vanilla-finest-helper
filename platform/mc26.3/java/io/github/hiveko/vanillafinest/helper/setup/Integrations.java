@@ -21,7 +21,8 @@ import org.slf4j.LoggerFactory;
 /**
  * The other mods the setup screen reads and changes. Every one is optional and reached by name (checked in
  * the 26.3 pack's versions: Language Reload 1.7.8, Multi Key Bindings 1.4.1, Voxy 0.2.20, Iris 1.11.7,
- * EaseGUI 1.0.0, Keycaps 1.0.0); when a mod is missing or different, its control is greyed out or hidden.
+ * Iris Shader Folder 1.4.3, EaseGUI 1.0.0, Keycaps 1.0.0); when a mod is missing or different, its control
+ * is greyed out or hidden.
  */
 final class Integrations {
     private static final Logger LOGGER = LoggerFactory.getLogger("Vanilla Finest Helper");
@@ -270,6 +271,103 @@ final class Integrations {
                 // the game folder's shaderpacks
             }
             return FabricLoader.getInstance().getGameDir().resolve("shaderpacks");
+        }
+
+        /**
+         * The shader packs Iris lists (zip files and folders with shaders inside), in Iris's order. Without
+         * Iris's list: the .zip files and folders with a "shaders" folder, sorted by name.
+         */
+        static List<String> packs() {
+            List<String> out = new ArrayList<>();
+            try {
+                Object manager = Class.forName("net.irisshaders.iris.Iris").getMethod("getShaderpacksDirectoryManager").invoke(null);
+                Object list = manager.getClass().getMethod("enumerate").invoke(manager);
+                if (list instanceof List<?> l) for (Object o : l) if (o instanceof String s) out.add(s);
+                return out;
+            } catch (ReflectiveOperationException | LinkageError | RuntimeException e) {
+                out.clear();
+            }
+            java.nio.file.Path dir = folder();
+            try (java.util.stream.Stream<java.nio.file.Path> files = java.nio.file.Files.list(dir)) {
+                files.filter(p -> java.nio.file.Files.isDirectory(p.resolve("shaders"))
+                                || p.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".zip"))
+                        .map(p -> p.getFileName().toString())
+                        .sorted(String.CASE_INSENSITIVE_ORDER)
+                        .forEach(out::add);
+            } catch (java.io.IOException | RuntimeException e) {
+                // no shaderpacks folder
+            }
+            return out;
+        }
+    }
+
+    // ---------------------------------------------------------------- Iris Shader Folder
+
+    /**
+     * Iris/Oculus Shader Folder (1.4.3): its filter, order, names, colours and tooltips for the shader list,
+     * read through its own classes so the setup screen shows the same list as Iris.
+     */
+    static final class ShaderFolder {
+        private static final String PACKAGE = "com.spaceagle17.iris_shader_folder.";
+
+        private ShaderFolder() {}
+
+        static boolean installed() {
+            return loaded("iris_shader_folder");
+        }
+
+        private static Object system(String name) throws ReflectiveOperationException {
+            return Class.forName(PACKAGE + "functionality." + name).getMethod("getInstance").invoke(null);
+        }
+
+        /** Its filter and its order, as in Iris's shader list. */
+        static List<String> arrange(List<String> packs) {
+            try {
+                Object filter = system("ShaderFilterSystem");
+                Method hide = filter.getClass().getMethod("shouldFilterShaderPack", String.class);
+                List<String> shown = new ArrayList<>();
+                for (String p : packs) if (!Boolean.TRUE.equals(hide.invoke(filter, p))) shown.add(p);
+                Object reorder = system("ShaderReorderSystem");
+                Object ordered = reorder.getClass().getMethod("reorderShaderPacks", List.class).invoke(reorder, shown);
+                List<String> out = new ArrayList<>();
+                if (ordered instanceof List<?> l) for (Object o : l) if (o instanceof String s) out.add(s);
+                return out;
+            } catch (ReflectiveOperationException | LinkageError | RuntimeException e) {
+                LOGGER.info("Setup screen: Iris Shader Folder's order not used ({})", e.toString());
+                return new ArrayList<>(packs);
+            }
+        }
+
+        /** The name as Iris's list shows it: renamed, then coloured (§ codes); ".zip" is left off. */
+        static String name(String pack) {
+            String name = pack;
+            try {
+                Object rename = system("ShaderRenameSystem");
+                Object renamed = rename.getClass().getMethod("renameShaderName", String.class).invoke(rename, pack);
+                if (renamed instanceof String s && !s.isBlank()) name = s;
+            } catch (ReflectiveOperationException | LinkageError | RuntimeException e) {
+                // the file name then
+            }
+            name = Look.withoutZip(name);
+            try {
+                Object recolor = system("ShaderRecolorSystem");
+                Object colored = recolor.getClass().getMethod("recolorShaderName", String.class).invoke(recolor, name);
+                if (colored instanceof String s && !s.isBlank()) name = s;
+            } catch (ReflectiveOperationException | LinkageError | RuntimeException e) {
+                // without colours then
+            }
+            return name;
+        }
+
+        /** The shader pack's own description and the tooltip set in Shader Folder's config, or "". */
+        static String tooltip(String pack) {
+            try {
+                Object tooltips = system("ShaderTooltipSystem");
+                Object text = tooltips.getClass().getMethod("getTooltip", String.class).invoke(tooltips, pack);
+                return text instanceof String s ? s.strip() : "";
+            } catch (ReflectiveOperationException | LinkageError | RuntimeException e) {
+                return "";
+            }
         }
     }
 

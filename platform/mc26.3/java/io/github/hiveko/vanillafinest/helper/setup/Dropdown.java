@@ -8,10 +8,13 @@ import net.minecraft.network.chat.Component;
 
 /**
  * A drop-down list under a button, like Multi Key Bindings' profile menu: black box with a white border,
- * one row per choice, the chosen one in yellow. Hovering a row shows its description as a normal tooltip.
+ * one row per choice, the chosen one in yellow (a coloured name keeps its colours and gets a yellow ✔).
+ * Hovering a row shows its description as a normal tooltip.
  */
 final class Dropdown {
     static final int ROW = 13;
+    /** Room around a label: 6 px on the left, the ✔ and a gap on the right. */
+    static final int PADDING = 24;
 
     record Item(String label, List<Component> tooltip, boolean selected, Runnable pick) {}
 
@@ -42,8 +45,10 @@ final class Dropdown {
                 g.fill(x + 2, ry, x + w - 2, ry + ROW, 0xFF3A3A3A);
                 if (!item.tooltip().isEmpty()) g.setComponentTooltipForNextFrame(font, item.tooltip(), mouseX, mouseY);
             }
+            boolean colored = item.label().indexOf('\u00a7') >= 0;
             int color = item.selected() ? 0xFFFFFF55 : hover ? 0xFFFFFFFF : 0xFFE0E0E0;
-            g.text(font, font.plainSubstrByWidth(item.label(), w - 12), x + 6, ry + 3, color, true);
+            g.text(font, font.plainSubstrByWidth(item.label(), w - PADDING), x + 6, ry + 3, color, true);
+            if (item.selected() && colored) g.text(font, "\u2714", x + w - 14, ry + 3, 0xFFFFFF55, true);
         }
     }
 

@@ -63,7 +63,6 @@ public class SetupScreen extends Screen {
     private final List<Row> rows = new ArrayList<>();
     private final Map<Row, String> folders = new EnumMap<>(Row.class);
     private final Map<Row, String> foldersInitial = new EnumMap<>(Row.class);
-    private JsonObject lookData = new JsonObject();
     private List<Look.Profile> profiles = List.of();
     private Look.Profile profile, profileInitial;
     private List<Look.Shader> shaders = List.of();
@@ -110,12 +109,11 @@ public class SetupScreen extends Screen {
             folders.put(row, v);
             foldersInitial.put(row, v);
         }
-        lookData = SetupTexts.look();
         profiles = Look.profiles();
         profile = profileInitial = Look.current(profiles);
-        shaders = Look.shadersFor(profile, lookData);
+        shaders = Look.shaders();
         shaderInitial = Look.currentShader(shaders);
-        shader = shaderInitial != null ? shaderInitial : shaders.get(0);
+        shader = shaderInitial != null ? shaderInitial : Look.Shader.NONE;
     }
 
     // ---------------------------------------------------------------- layout
@@ -604,12 +602,15 @@ public class SetupScreen extends Screen {
         }
         boolean vulkan = Integrations.runningOnVulkan();
         boolean iris = Integrations.Iris.installed();
-        Button pb = button(Component.literal(profile.name() + "  ▾"), cx, cy, colW, btn -> openProfiles(cx, cy + 21, colW));
+        Button pb = button(Component.literal(SetupTexts.format("look.profile", profile.name()) + "  ▾"), cx, cy, colW,
+                btn -> openProfiles(cx, cy + 21, colW));
         pb.setTooltip(Tooltip.create(text("look.profile.tooltip")));
-        Button sb = button(Component.literal(SetupTexts.format("look.shaders", shaderName(shader)) + "  ▾"),
-                cx + colW + 6, cy, colW, btn -> openShaders(cx + colW + 6, cy + 21, colW));
+        int sx = cx + colW + 6;
+        Button sb = button(Component.literal(SetupTexts.format("look.shaders", shaderName(shader) + "§r") + "  ▾"),
+                sx, cy, colW, btn -> openShaders(sx + colW, cy + 21, colW));
         sb.active = iris && !vulkan;
         if (!sb.active) sb.setTooltip(Tooltip.create(text(vulkan ? "look.shaders.vulkan" : "look.shaders.missing")));
+        else if (!shaderTip(shader).isEmpty()) sb.setTooltip(Tooltip.create(Component.literal(shaderTip(shader))));
 
         // preview: 16:9, as big as fits under the buttons
         int areaTop = cy + 26, areaH = ch - 26;
@@ -617,7 +618,7 @@ public class SetupScreen extends Screen {
         int prevW = prevH * 16 / 9;
         int prevX = cx + (cw - prevW) / 2, prevY = areaTop + (areaH - prevH) / 2;
         String title = SetupTexts.format("look.preview");
-        String combo = profile.name() + " + " + shaderName(shader);
+        String combo = profile.name() + " + " + plainShaderName(shader);
         String soon = SetupTexts.format("look.preview.soon");
         paints.add(g -> {
             g.fill(prevX, prevY, prevX + prevW, prevY + prevH, 0xFF000000);
@@ -636,33 +637,40 @@ public class SetupScreen extends Screen {
         for (Look.Profile p : profiles) {
             items.add(new Dropdown.Item(p.name(), profileTooltip(p), p == profile, () -> {
                 profile = p;
-                shaders = Look.shadersFor(p, lookData);
-                if (!shaders.contains(shader)) {
-                    Look.Shader same = null;
-                    for (Look.Shader s : shaders) if (shader != null && s.id().equals(shader.id())) same = s;
-                    shader = same != null ? same : shaders.get(0);
-                }
                 rebuildWidgets();
             }));
         }
         dropdown = new Dropdown(x, y, w, items);
     }
 
-    private void openShaders(int x, int y, int w) {
+    /**
+     * The shader list under its button, right-aligned to it and as wide as the longest name needs: the
+     * order, colours and tooltips come from Iris Shader Folder (see {@link Look#shaders()}).
+     */
+    private void openShaders(int right, int y, int minW) {
         List<Dropdown.Item> items = new ArrayList<>();
+        int w = minW;
         for (Look.Shader s : shaders) {
             List<Component> tip = new ArrayList<>();
             tip.add(Component.literal(shaderName(s)).withStyle(ChatFormatting.WHITE));
-            String descKey = "shader." + s.id() + ".desc";
-            if (SetupTexts.has(descKey)) {
-                for (FormattedCharSequence l : wrap(SetupTexts.format(descKey), 220)) tip.add(toComponent(l).withStyle(ChatFormatting.GRAY));
+            for (String line : shaderTip(s).split("\n")) {
+                if (line.isBlank()) continue;
+                for (FormattedCharSequence l : wrap(line.strip(), 220)) tip.add(toComponent(l).withStyle(ChatFormatting.GRAY));
             }
             items.add(new Dropdown.Item(shaderName(s), tip, s.equals(shader), () -> {
                 shader = s;
                 rebuildWidgets();
             }));
+            w = Math.max(w, font.width(shaderName(s)) + Dropdown.PADDING);
         }
-        dropdown = new Dropdown(x, y, w, items);
+        w = Math.min(w, right - px - 4);
+        dropdown = new Dropdown(right - w, y, w, items);
+    }
+
+    /** The shader's tooltip text: Iris Shader Folder's (the pack's own description and the pack's text). */
+    private static String shaderTip(Look.Shader s) {
+        if (s == null || s.none()) return SetupTexts.has("shader.none.desc") ? SetupTexts.format("shader.none.desc") : "";
+        return s.tooltip();
     }
 
     private List<Component> profileTooltip(Look.Profile p) {
@@ -684,10 +692,15 @@ public class SetupScreen extends Screen {
         return Component.literal(sb.toString());
     }
 
-    private String shaderName(Look.Shader s) {
-        if (s == null) return SetupTexts.format("shader.none");
-        String key = "shader." + s.id();
-        return SetupTexts.has(key) ? SetupTexts.format(key) : s.file();
+    /** The shader's name as Iris's list shows it, with Iris Shader Folder's colours (§ codes). */
+    private static String shaderName(Look.Shader s) {
+        if (s == null || s.none()) return SetupTexts.format("shader.none");
+        return s.name();
+    }
+
+    private static String plainShaderName(Look.Shader s) {
+        String plain = ChatFormatting.stripFormatting(shaderName(s));
+        return plain != null ? plain : "";
     }
 
     // ---------------------------------------------------------------- 5. Ready to play
@@ -721,7 +734,7 @@ public class SetupScreen extends Screen {
                     : "ready.folders." + preset.name().toLowerCase(java.util.Locale.ROOT))});
         }
         if (profile != null) {
-            lines.add(new String[]{"ready.look", SetupTexts.format("ready.look.value", profile.name(), shaderName(shader))});
+            lines.add(new String[]{"ready.look", SetupTexts.format("ready.look.value", profile.name(), plainShaderName(shader))});
         }
 
         int keyW = 0;
