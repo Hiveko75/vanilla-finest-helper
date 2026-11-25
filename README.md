@@ -102,4 +102,13 @@ version's `CHANGELOG.md` section as notes. Locally (Java 25 and 21):
 ./gradlew -p mc1.21.1 build      # -> mc1.21.1/build/libs
 ```
 
-Client-side only. Settings are in `config/vanilla-finest-helper.properties`. License: All rights reserved.
+Client-side only. Settings are in `config/vanilla-finest-helper.properties`.
+
+## Source and licence
+
+Vanilla Finest Helper is made for the Vanilla Finest modpacks and ships inside them; it is not published
+on its own. The source is public so that players can see what it does with their folders and settings.
+
+It is **not open source**: all rights reserved, see [LICENSE](LICENSE). Please don't copy the code into
+other projects or include the mod in other modpacks without asking. Bug reports and questions are
+welcome as issues.
