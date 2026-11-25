@@ -77,6 +77,7 @@ public class SetupScreen extends Screen {
     private final List<Consumer<GuiGraphicsExtractor>> paints = new ArrayList<>();
     private final List<HoverTip> hoverTips = new ArrayList<>();
     private Dropdown dropdown;
+    private List<String> shownLanguages;
 
     private record HoverTip(int x, int y, int w, int h, List<Component> lines) {
         boolean over(int mx, int my) {
@@ -278,9 +279,8 @@ public class SetupScreen extends Screen {
 
         // Language & Controls
         List<String> langs = Integrations.languages();
-        StringBuilder names = new StringBuilder(Integrations.languageName(langs.get(0), true));
-        for (int i = 1; i < langs.size(); i++) names.append(", ").append(Integrations.languageName(langs.get(i), false));
-        String hint1 = SetupTexts.format(Integrations.loaded("languagereload") ? "settings.languages.hint" : "settings.languages.hint.single");
+        shownLanguages = langs;
+        String hint1 = languagesText(langs);
         String added = HelperSettings.get("setup.language.added", "");
         if (!added.isEmpty() && langs.contains(added)) {
             hint1 += " " + SetupTexts.format("settings.languages.added", Integrations.languageName(added, false));
@@ -301,7 +301,7 @@ public class SetupScreen extends Screen {
         paintBox(cx, ya, cw, boxH);
         int[] pa = spread(ya + 5, boxH - 10, a, 3);
         paintLines(List.of(text("settings.section.controls").getVisualOrderText()), innerX, pa[0], YELLOW);
-        Button languages = button(Component.literal(SetupTexts.format("settings.languages", names.toString())), innerX, pa[1], colW,
+        Button languages = button(text("settings.languages"), innerX, pa[1], colW,
                 btn -> minecraft.gui.setScreen(new LanguageSelectScreen(this, minecraft.options, minecraft.getLanguageManager())));
         languages.setTooltip(Tooltip.create(text("settings.languages.tooltip")));
         add(new SensitivitySlider(innerX + colW + 8, pa[1], colW));
@@ -345,6 +345,35 @@ public class SetupScreen extends Screen {
             add(minecraft.options.renderDistance().createButton(minecraft.options, innerX + colW + 8, pb[2], colW));
         }
         paintLines(hintLines2, innerX, pb[3], HINT);
+    }
+
+    /**
+     * The chosen languages under the Languages button: the menu language, and (with Language Reload) the
+     * others that inventory search also uses, with "stone" in each of them as the example, read from that
+     * language's own file ("Stein" for German).
+     */
+    private String languagesText(List<String> langs) {
+        String main = Integrations.languageName(langs.get(0), true);
+        if (!Integrations.loaded("languagereload")) return SetupTexts.format("settings.languages.single", main);
+        if (langs.size() == 1) return SetupTexts.format("settings.languages.one", main);
+        List<String> extra = new ArrayList<>();
+        for (int i = 1; i < langs.size(); i++) extra.add(Integrations.languageName(langs.get(i), false));
+        List<String> words = new ArrayList<>();
+        for (String code : langs) {
+            String w = Integrations.translationIn(code, "block.minecraft.stone");
+            if (w != null && !w.isBlank()) {
+                String quoted = SetupTexts.format("settings.languages.word", w);
+                if (!words.contains(quoted)) words.add(quoted);
+            }
+        }
+        return SetupTexts.format("settings.languages.more", main, String.join(", ", extra), String.join(", ", words));
+    }
+
+    /** Back from the language screen: the languages may change a moment later, so the step is redrawn then. */
+    @Override
+    public void tick() {
+        super.tick();
+        if (step == 1 && shownLanguages != null && !shownLanguages.equals(Integrations.languages())) rebuildWidgets();
     }
 
     /**

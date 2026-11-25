@@ -69,6 +69,37 @@ final class Integrations {
         return withRegion ? info.toComponent().getString() : info.name();
     }
 
+    private static final java.util.Map<String, com.google.gson.JsonObject> LANGUAGE_FILES = new java.util.HashMap<>();
+
+    /**
+     * A text in another language than the game's ("block.minecraft.stone" in de_de = "Stein"), from that
+     * language's files in the game's resources (resource packs included, the top one wins); null if missing.
+     */
+    static String translationIn(String code, String key) {
+        com.google.gson.JsonObject merged = LANGUAGE_FILES.get(code);
+        if (merged == null) {
+            merged = new com.google.gson.JsonObject();
+            try {
+                net.minecraft.resources.Identifier id = net.minecraft.resources.Identifier.withDefaultNamespace("lang/" + code + ".json");
+                for (net.minecraft.server.packs.resources.Resource r : Minecraft.getInstance().getResourceManager().getResourceStack(id)) {
+                    try (java.io.Reader reader = r.openAsReader()) {
+                        com.google.gson.JsonElement json = com.google.gson.JsonParser.parseReader(reader);
+                        if (json.isJsonObject()) {
+                            for (var e : json.getAsJsonObject().entrySet()) merged.add(e.getKey(), e.getValue());
+                        }
+                    } catch (Exception e) {
+                        // a broken language file in a resource pack: skip it
+                    }
+                }
+            } catch (RuntimeException e) {
+                // no resources yet
+            }
+            LANGUAGE_FILES.put(code, merged);
+        }
+        com.google.gson.JsonElement v = merged.get(key);
+        return v != null && v.isJsonPrimitive() ? v.getAsString() : null;
+    }
+
     /** The game's language code for the computer's language ("hu_hu"), or null when the game has none. */
     static String systemLanguage() {
         Locale locale = Locale.getDefault();
