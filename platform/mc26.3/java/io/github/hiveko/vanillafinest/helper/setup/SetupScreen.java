@@ -339,14 +339,43 @@ public class SetupScreen extends Screen {
         }
         add(new GuiScaleSlider(innerX, pb[2], colW));
         if (voxyOn != null && voxyOn && !vulkan) {
-            Button rd = button(Component.translatable("options.genericValue", Component.translatable("options.renderDistance"),
-                    Component.translatable("options.chunks", 16)), innerX + colW + 8, pb[2], colW, btn -> {});
-            rd.active = false;
+            LockedRenderDistance rd = add(new LockedRenderDistance(innerX + colW + 8, pb[2], colW));
             rd.setTooltip(Tooltip.create(text("settings.renderdistance.locked")));
         } else {
             add(minecraft.options.renderDistance().createButton(minecraft.options, innerX + colW + 8, pb[2], colW));
         }
         paintLines(hintLines2, innerX, pb[3], HINT);
+    }
+
+    /**
+     * The render distance slider while Voxy is on: Minecraft's slider, greyed out at 16 chunks (Voxy draws the
+     * land beyond it), with Minecraft's own label.
+     */
+    private final class LockedRenderDistance extends AbstractSliderButton {
+        static final int CHUNKS = 16;
+
+        LockedRenderDistance(int x, int y, int w) {
+            super(x, y, w, 20, Component.empty(), position());
+            active = false;
+            updateMessage();
+        }
+
+        private static double position() {
+            var values = net.minecraft.client.Minecraft.getInstance().options.renderDistance().values();
+            if (values instanceof net.minecraft.client.OptionInstance.IntRangeBase range) return range.toSliderValue(CHUNKS);
+            return (CHUNKS - 2) / 30.0;
+        }
+
+        @Override
+        protected void updateMessage() {
+            setMessage(net.minecraft.client.Options.genericValueLabel(Component.translatable("options.renderDistance"),
+                    Component.translatable("options.chunks", CHUNKS)));
+        }
+
+        @Override
+        protected void applyValue() {
+            // fixed while Voxy is on
+        }
     }
 
     /**
