@@ -3,6 +3,8 @@ package io.github.hiveko.vanillafinest.helper.setup;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.fabricmc.fabric.api.event.Event;
+
 import io.github.hiveko.vanillafinest.helper.HelperSettings;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -30,14 +32,23 @@ public class SetupModule implements ClientModInitializer {
     public static final String DONE_KEY = "setup.done";
     private static final String LANGUAGE_CHECKED_KEY = "setup.language.checked";
     private static final Identifier ICON = Identifier.fromNamespaceAndPath("vanilla-finest-helper", "icon/setup");
+    private static final Identifier LATE = Identifier.fromNamespaceAndPath("vanilla-finest-helper", "after_other_mods");
+    /** Message keys of Minecraft's own icon buttons on the title and pause screens. */
+    private static final java.util.Set<String> BUILT_IN_ICONS = java.util.Set.of(
+            "gui.friends.open", "options.language", "options.accessibility",
+            "menu.reportBugs", "menu.sendFeedback", "menu.playerReporting");
     private static boolean firstStartChecked;
     private static Screen openOver;
 
     @Override
     public void onInitializeClient() {
         Integrations.registerWithEaseGui(SetupScreen.class);
-        ScreenEvents.AFTER_INIT.register((mc, screen, w, h) -> {
+        // the icon is placed after the other mods have added theirs (a phase after the default one)
+        ScreenEvents.AFTER_INIT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE);
+        ScreenEvents.AFTER_INIT.register(LATE, (mc, screen, w, h) -> {
             if (screen instanceof TitleScreen || screen instanceof PauseScreen pause && pause.showsPauseMenu()) addIcon(screen);
+        });
+        ScreenEvents.AFTER_INIT.register((mc, screen, w, h) -> {
             if (screen instanceof TitleScreen && !firstStartChecked) {
                 firstStartChecked = true;
                 if (!"true".equals(HelperSettings.get(DONE_KEY, "false").trim())) openOver = screen;
@@ -74,7 +85,12 @@ public class SetupModule implements ClientModInitializer {
         }
     }
 
-    /** The settings icon, after the other icons of the row (title: next to Accessibility; pause: centred row). */
+    /**
+     * The settings icon, right after Minecraft's own icons in their row (title screen: friends, language,
+     * accessibility; pause screen: feedback, bugs, friends, reporting) and before the icons other mods
+     * added; the row is then centred again. When the row also holds normal buttons (older layouts, where
+     * Accessibility sits next to Quit Game), the icon only goes after the last icon and nothing is moved.
+     */
     private static void addIcon(Screen screen) {
         try {
             SetupTexts.reload();
@@ -83,45 +99,41 @@ public class SetupModule implements ClientModInitializer {
                             b -> SetupScreen.open(screen), true)
                     .size(20, 20).sprite(ICON, 15, 15).withTootip().build();
 
-            int rowY = Integer.MIN_VALUE;
-            if (screen instanceof TitleScreen) {
-                for (AbstractWidget w : widgets) {
-                    if (w.getMessage().getContents() instanceof TranslatableContents t && t.getKey().equals("options.accessibility")) {
-                        rowY = w.getY();
-                        break;
-                    }
-                }
-            } else {
-                // the pause screen's row of icon buttons (report bugs, social, friends, …)
-                int best = 0;
-                for (AbstractWidget w : widgets) {
-                    if (!(w instanceof SpriteIconButton) || w.getWidth() != 20) continue;
-                    int count = 0;
-                    for (AbstractWidget o : widgets) if (o instanceof SpriteIconButton && o.getY() == w.getY()) count++;
-                    if (count > best) {
-                        best = count;
-                        rowY = w.getY();
-                    }
-                }
-                if (rowY != Integer.MIN_VALUE) {
-                    // keep the row centred: move it half an icon to the left
-                    for (AbstractWidget w : widgets) if (w.getY() == rowY && w.getHeight() == 20) w.setX(w.getX() - 12);
-                }
+            // the last of Minecraft's own icons decides the row and the place
+            AbstractWidget anchor = null;
+            for (AbstractWidget w : widgets) {
+                if (w.getWidth() != 20 || w.getHeight() != 20) continue;
+                if (!(w.getMessage().getContents() instanceof TranslatableContents t) || !BUILT_IN_ICONS.contains(t.getKey())) continue;
+                if (anchor == null || w.getY() == anchor.getY() && w.getX() > anchor.getX()) anchor = w;
             }
-
-            if (rowY == Integer.MIN_VALUE) {
+            if (anchor == null) {
                 icon.setPosition(screen.width - 24, 4);
-            } else {
-                int right = Integer.MIN_VALUE, left = Integer.MAX_VALUE;
-                for (AbstractWidget w : widgets) {
-                    if (w.getY() != rowY || w.getHeight() != 20) continue;
-                    right = Math.max(right, w.getRight());
-                    left = Math.min(left, w.getX());
-                }
-                int x = right + 4;
-                if (x + 20 > screen.width) x = left - 24;
-                icon.setPosition(x, rowY);
+                widgets.add(icon);
+                return;
             }
+            int rowY = anchor.getY();
+            List<AbstractWidget> row = new ArrayList<>();
+            for (AbstractWidget w : widgets) if (w.getY() == rowY && w.getHeight() == 20) row.add(w);
+            boolean iconsOnly = row.stream().allMatch(w -> w.getWidth() == 20);
+            int ax = anchor.getX();
+            if (!iconsOnly) {
+                int right = ax + 20;
+                for (AbstractWidget w : row) right = Math.max(right, w.getRight());
+                icon.setPosition(right + 4 + 20 <= screen.width ? right + 4 : ax - 24, rowY);
+                widgets.add(icon);
+                return;
+            }
+            // make room after the anchor, put the icon there, centre the whole row
+            for (AbstractWidget w : row) if (w.getX() > ax) w.setX(w.getX() + 24);
+            icon.setPosition(ax + 24, rowY);
+            row.add(icon);
+            int left = Integer.MAX_VALUE, right = Integer.MIN_VALUE;
+            for (AbstractWidget w : row) {
+                left = Math.min(left, w.getX());
+                right = Math.max(right, w.getRight());
+            }
+            int shift = (screen.width - (right - left)) / 2 - left;
+            for (AbstractWidget w : row) w.setX(w.getX() + shift);
             widgets.add(icon);
         } catch (RuntimeException | LinkageError e) {
             LOGGER.warn("Setup screen: no settings icon on {} ({})", screen.getClass().getSimpleName(), e.toString());
