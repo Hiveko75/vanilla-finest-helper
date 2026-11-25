@@ -46,7 +46,10 @@ public class SetupModule implements ClientModInitializer {
         // the icon is placed after the other mods have added theirs (a phase after the default one)
         ScreenEvents.AFTER_INIT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE);
         ScreenEvents.AFTER_INIT.register(LATE, (mc, screen, w, h) -> {
-            if (screen instanceof TitleScreen || screen instanceof PauseScreen pause && pause.showsPauseMenu()) addIcon(screen);
+            if (screen instanceof TitleScreen || screen instanceof PauseScreen pause && pause.showsPauseMenu()) {
+                addIcon(screen);
+                flashbackTooltip(screen);
+            }
         });
         ScreenEvents.AFTER_INIT.register((mc, screen, w, h) -> {
             if (screen instanceof TitleScreen && !firstStartChecked) {
@@ -82,6 +85,23 @@ public class SetupModule implements ClientModInitializer {
         if (Integrations.setLanguages(langs.get(0), extra)) {
             HelperSettings.set("setup.language.added", system);
             LOGGER.info("Setup screen: {} added as a second language (the computer's language)", system);
+        }
+    }
+
+    /**
+     * Flashback's replay button (an icon in the row with Flashback Settings) has no tooltip of its own; it
+     * gets its own text as one ("Open Replays"), like the other icons in the row. Found by class name, so
+     * Flashback stays optional.
+     */
+    private static void flashbackTooltip(Screen screen) {
+        try {
+            for (AbstractWidget w : Screens.getWidgets(screen)) {
+                if (w.getClass().getName().equals("com.moulberry.flashback.screen.FlashbackButton")) {
+                    w.setTooltip(net.minecraft.client.gui.components.Tooltip.create(w.getMessage()));
+                }
+            }
+        } catch (RuntimeException | LinkageError e) {
+            // no tooltip then
         }
     }
 

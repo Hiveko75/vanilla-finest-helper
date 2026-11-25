@@ -1,7 +1,7 @@
 {
   "_comment": "Vanilla Finest setup screen texts. Copy this file to config/vanilla-finest-helper/setup/ (or <language>.json, e.g. hu_hu.json) to change the wording; a copy only needs the texts it changes. %s is filled in by the game, {key:<key binding id>} becomes the key's current name.",
 
-  "icon.tooltip": "Vanilla Finest setup",
+  "icon.tooltip": "Vanilla Finest Setup",
   "button.back": "Back",
   "button.next": "Next",
   "button.done": "Apply and close",
