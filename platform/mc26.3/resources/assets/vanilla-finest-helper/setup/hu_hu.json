@@ -22,6 +22,7 @@
   "settings.languages.hint": "§eTöbb nyelvet is használhatsz§r: az első a menük nyelve, a keresés a felszerelésben mindegyiken működik („kő” vagy „stone”).",
   "settings.languages.hint.single": "A menük és a szövegek nyelve.",
   "settings.languages.added": "%s: a számítógéped nyelve, ezért hozzáadtuk.",
+  "settings.mouse": "Egérérzékenység: %s",
   "settings.keybinds": "Billentyűk: %s",
   "settings.keybinds.plain": "Billentyűzetbeállítások…",
   "settings.keymap": "Billentyűzet-térkép…",

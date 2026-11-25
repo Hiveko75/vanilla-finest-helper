@@ -304,7 +304,7 @@ public class SetupScreen extends Screen {
         Button languages = button(Component.literal(SetupTexts.format("settings.languages", names.toString())), innerX, pa[1], colW,
                 btn -> minecraft.gui.setScreen(new LanguageSelectScreen(this, minecraft.options, minecraft.getLanguageManager())));
         languages.setTooltip(Tooltip.create(text("settings.languages.tooltip")));
-        add(minecraft.options.sensitivity().createButton(minecraft.options, innerX + colW + 8, pa[1], colW));
+        add(new SensitivitySlider(innerX + colW + 8, pa[1], colW));
         paintLines(hintLines1, innerX, pa[2], HINT);
         String keyProfile = Integrations.keyProfile();
         Component keysLabel = keyProfile != null
@@ -347,6 +347,31 @@ public class SetupScreen extends Screen {
             add(minecraft.options.renderDistance().createButton(minecraft.options, innerX + colW + 8, pb[2], colW));
         }
         paintLines(hintLines2, innerX, pb[3], HINT);
+    }
+
+    /**
+     * Minecraft's mouse sensitivity, labelled "Mouse Sensitivity" (Minecraft's own slider just says
+     * "Sensitivity"). Same values and steps as Options: 0–200%, with Minecraft's names for the two ends.
+     */
+    private final class SensitivitySlider extends AbstractSliderButton {
+        SensitivitySlider(int x, int y, int w) {
+            super(x, y, w, 20, Component.empty(), minecraft.options.sensitivity().get());
+            updateMessage();
+        }
+
+        @Override
+        protected void updateMessage() {
+            Component v;
+            if (value <= 0.0) v = Component.translatable("options.sensitivity.min");
+            else if (value >= 1.0) v = Component.translatable("options.sensitivity.max");
+            else v = Component.literal((int) (value * 200.0) + "%");
+            setMessage(Component.literal(SetupTexts.format("settings.mouse", v.getString())));
+        }
+
+        @Override
+        protected void applyValue() {
+            minecraft.options.sensitivity().set(value);
+        }
     }
 
     /** GUI scale: far left Automatic (N), then 1 … the biggest scale that fits; applied on release. */
@@ -620,7 +645,7 @@ public class SetupScreen extends Screen {
         } else {
             lines.add(new String[]{"ready.languages", main});
         }
-        lines.add(new String[]{"ready.mouse", Math.round(minecraft.options.sensitivity().get() * 200) + "%"});
+        lines.add(new String[]{"ready.mouse", (int) (minecraft.options.sensitivity().get() * 200.0) + "%"});
         String keyProfile = Integrations.keyProfile();
         lines.add(new String[]{"ready.keybinds", keyProfile != null ? SetupTexts.format("ready.keybinds.profile", keyProfile)
                 : SetupTexts.format("ready.keybinds.default")});
