@@ -5,6 +5,19 @@
 First version as the players' side of the Vanilla Finest modpacks. The earlier helper builds (never
 published) also held the fixes for the packs' mods; those moved to Vanilla Finest Fixes.
 
+- **Setup screen (26.3 for now):** one screen for everything the player sets, in five steps: Welcome
+  (Markdown text with the current key names, links), Settings (languages with Language Reload, mouse
+  sensitivity, key bindings and the Multi Key Bindings profile, Keyboard Map with Keycaps, graphics API,
+  Voxy on/off, GUI scale, render distance), Folders (Modpack / Minecraft / Desktop / Documents, or one
+  folder at a time, written into each mod's own setting), Look (Packed Packs profile and shaders, with
+  their descriptions as tooltips; preview pictures later) and Ready to play. Drawn like Options from the
+  title screen (panorama, blur, the Minecraft logo, a fixed 430×262 panel) with Minecraft's own widgets,
+  font and tooltips. Opens on the first start, from a settings icon on the title and pause screens, and
+  from Mod Menu's Configure button. Texts in `config/vanilla-finest-helper/setup/` (English and
+  Hungarian in the jar). The computer's language is added as a second language on the first start.
+- **GUI scale (26.3 for now):** an automatic GUI scale from the window's width (`guiscale.rules`,
+  `guiscale.mode` in `config/vanilla-finest-helper.properties`; 640×360 GUI pixels on 16:9 screens). Off
+  while GUI Scaler is installed; the setup screen's slider then switches GUI Scaler's own setting.
 - **Folders (all versions):** where Flashback saves and lists replays (without Flashback Settings; the
   helper redirects `Flashback.getReplayFolder`) and where Axiom keeps blueprints (Axiom's own
   `blueprint.customPath` setting in `config/axiom/axiom.json`, which the helper writes). Empty means the

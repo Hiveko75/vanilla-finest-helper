@@ -7,8 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Vanilla Finest Helper: the players' side of the Vanilla Finest modpacks (folders now, the setup screen
- * later). The fixes for the packs' mods are a separate mod, Vanilla Finest Fixes.
+ * Vanilla Finest Helper: the players' side of the Vanilla Finest modpacks: folders here; the setup screen and
+ * the GUI scale module (26.3 for now) are in platform/mc26.3 (setup/, guiscale/), with their own client
+ * entrypoint. The fixes for the packs' mods are a separate mod, Vanilla Finest Fixes.
  *
  * <ul>
  *   <li><b>Home folders</b> (homefolders/, all versions, off by default): on an instance's first start,

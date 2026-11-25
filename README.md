@@ -1,7 +1,36 @@
 # Vanilla Finest Helper
 
-The players' side of the Vanilla Finest modpacks, in one Fabric mod: where screenshots, schematics,
-replays and blueprints are kept, and later the setup screen. It changes little between pack versions.
+The players' side of the Vanilla Finest modpacks, in one Fabric mod: the setup screen, an automatic GUI
+scale, and where screenshots, schematics, replays and blueprints are kept. It changes little between pack
+versions.
+
+## Setup screen (26.3 for now)
+
+One screen for everything the player sets, in five steps: **Welcome**, **Settings**, **Folders**, **Look**
+and **Ready to play**. It opens on the first start of an instance (`setup.done=true` in
+`config/vanilla-finest-helper.properties` afterwards), from the settings icon on the title and pause
+screens, and from Mod Menu's Configure button.
+
+- Drawn like Options opened from the title screen: panorama, blur, the real Minecraft logo, then a fixed
+  panel of 430×262 GUI pixels with Minecraft's own buttons, sliders, font and tooltips (so resource packs
+  and Enhanced Tooltips style it). On small windows the panel shrinks and the step scrolls.
+- Minecraft's own settings (languages, mouse, key bindings, graphics API, render distance, GUI scale)
+  apply at once, as in Options. Voxy, the folders and the look are applied with ✔.
+- Every other mod is optional and reached by name: Language Reload (several languages), Multi Key
+  Bindings (profile name), Keycaps (Keyboard Map), Voxy, Iris, Packed Packs (profiles), Screenshot
+  Gallery, Litematica, Flashback (Settings), Axiom, EaseGUI (animations kept off this screen).
+- Texts: `assets/vanilla-finest-helper/setup/<language>.json` and `welcome.md` / `welcome.<language>.md`
+  in the jar (English and Hungarian); a file with the same name in `config/vanilla-finest-helper/setup/`
+  wins, so the wording changes without a new build. `{key:<key binding id>}` (or `{key:minihud:<hotkey>}`
+  for malilib) shows a key's current name. `look.json` says which shaders each profile offers.
+
+## GUI scale module (26.3 for now)
+
+An automatic GUI scale chosen from the window's width: `guiscale.rules` (`width:scale` pairs; the highest
+width not wider than the window wins) and `guiscale.mode` (`auto` or a number) in
+`config/vanilla-finest-helper.properties`. The default table gives 640×360 GUI pixels on every 16:9
+screen (1280 → 2, 1920 → 3, 2560 → 4, 3840 → 6). It stays off while GUI Scaler is installed; the setup
+screen's slider then switches GUI Scaler's own automatic setting.
 
 The fixes for the packs' mods are a separate mod,
 [Vanilla Finest Fixes](https://github.com/Hiveko75/vanilla-finest-fixes), which is bound to the mod

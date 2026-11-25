@@ -18,17 +18,28 @@ sourceSets.main {
     resources.srcDirs += ["platform/mc${mc}/resources"]
 }
 
+repositories {
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${v.minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${v.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${v.fabric_version}"
     // Flashback and Axiom are not needed at compile time: Flashback is targeted by name, Axiom's settings
-    // file is written as JSON and its running setting is reached by reflection.
+    // file is written as JSON and its running setting is reached by reflection. The setup screen reaches
+    // the other mods by reflection too; only Mod Menu's API is needed to compile (modmenu= line, not bundled).
+    if (v.modmenu) compileOnly(v.modmenu)
 }
 
 processResources {
     def props = [version: project.version, minecraft_range: v.minecraft_range,
-                 loader_min: v.loader_min, java_version: '25']
+                 loader_min: v.loader_min, java_version: '25',
+                 client_extra: v.client_extra ?: '', entrypoints_extra: v.entrypoints_extra ?: '']
     inputs.properties props
     filesMatching("fabric.mod.json") { expand props }
 }
