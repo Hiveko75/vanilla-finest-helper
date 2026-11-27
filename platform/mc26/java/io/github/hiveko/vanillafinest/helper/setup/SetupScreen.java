@@ -65,6 +65,7 @@ public class SetupScreen extends Screen {
     private List<Look.Profile> profiles = List.of();
     private Look.Profile profile, profileInitial;
     private List<Look.Shader> shaders = List.of();
+    private String shadersLanguage = "";
     private Look.Shader shader, shaderInitial;
     private Markdown welcome;
 
@@ -111,8 +112,30 @@ public class SetupScreen extends Screen {
         profiles = Look.profiles();
         profile = profileInitial = Look.current(profiles);
         shaders = Look.shaders();
+        shadersLanguage = SetupTexts.language();
         shaderInitial = Look.currentShader(shaders);
         shader = shaderInitial != null ? shaderInitial : Look.Shader.NONE;
+    }
+
+    /**
+     * The shader names and tooltips again, in the language chosen meanwhile (the list is first read when the
+     * screen opens, which on an instance's first start is before the player picks a language on the Settings
+     * page). The chosen and the initial shader are kept by file.
+     */
+    private void refreshShaderTexts() {
+        Integrations.ShaderFolder.clearCache();
+        List<Look.Shader> fresh = Look.shaders();
+        shaderInitial = sameFile(fresh, shaderInitial);
+        Look.Shader chosen = sameFile(fresh, shader);
+        shader = chosen != null ? chosen : Look.Shader.NONE;
+        shaders = fresh;
+        shadersLanguage = SetupTexts.language();
+    }
+
+    private static Look.Shader sameFile(List<Look.Shader> list, Look.Shader s) {
+        if (s == null) return null;
+        for (Look.Shader x : list) if (x.none() == s.none() && (s.none() || x.file().equals(s.file()))) return x;
+        return null;
     }
 
     // ---------------------------------------------------------------- layout
@@ -121,6 +144,7 @@ public class SetupScreen extends Screen {
     protected void init() {
         SetupTexts.reload();
         if (!loaded) loadState();
+        if (!SetupTexts.language().equals(shadersLanguage)) refreshShaderTexts();
         content.clear();
         paints.clear();
         hoverTips.clear();

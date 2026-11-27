@@ -369,6 +369,16 @@ final class Integrations {
             return name;
         }
 
+        /** Forgets Shader Folder's tooltips (it keeps them for 5 s), so they are made again in the current language. */
+        static void clearCache() {
+            try {
+                Object tooltips = system("ShaderTooltipSystem");
+                tooltips.getClass().getMethod("clearCache").invoke(tooltips);
+            } catch (ReflectiveOperationException | LinkageError | RuntimeException e) {
+                // they expire by themselves within 5 seconds
+            }
+        }
+
         /** The shader pack's own description and the tooltip set in Shader Folder's config, or "". */
         static String tooltip(String pack) {
             try {
