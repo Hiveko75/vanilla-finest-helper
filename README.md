@@ -24,6 +24,15 @@ screens, and from Mod Menu's Configure button.
   in the jar (English and Hungarian); a file with the same name in `config/vanilla-finest-helper/setup/`
   wins, so the wording changes without a new build. `{key:<key binding id>}` (or `{key:minihud:<hotkey>}`
   for malilib) shows a key's current name.
+  The packs ship `config/vanilla-finest-helper/setup/welcome.md` and `welcome.hu_hu.md`, so the Welcome page
+  is edited in the pack (reopen the setup screen to see the change).
+- **Folder pointers:** when a folder is kept outside the instance (the Minecraft, Desktop or Documents
+  preset, or a folder set in the mod's own settings), a shortcut is written where the files would normally
+  be, e.g. `screenshots/Screenshots are in Documents - Minecraft - screenshots.url` (`.webloc` on macOS,
+  `.desktop` on Linux) plus a `.txt` with the full path. Checked at start-up, when the setup screen applies
+  its folders and when Litematica's, Flashback Settings' or a Cloth Config settings screen (Screenshot
+  Gallery) closes. Only the helper's own files are replaced or removed (they carry a marker line); never a
+  real folder link, so exporting the instance does not copy the shared files.
 - Look page: "Style" is the Packed Packs profile; "Shaders" lists every shader pack in Iris's folder.
   With Iris Shader Folder installed, the list uses its filter, order, colours and tooltips
   (`config/iris_shader_folder.properties`), the same as Iris's own shader list.

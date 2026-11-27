@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.event.Event;
 
 import io.github.hiveko.vanillafinest.helper.HelperSettings;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
@@ -39,6 +40,8 @@ public class SetupModule implements ClientModInitializer {
             "menu.reportBugs", "menu.sendFeedback", "menu.playerReporting");
     private static boolean firstStartChecked;
     private static Screen openOver;
+    /** A folder mod's settings screen closed: the folder pointers are checked on the next tick. */
+    private static boolean pointersPending;
 
     @Override
     public void onInitializeClient() {
@@ -57,6 +60,18 @@ public class SetupModule implements ClientModInitializer {
                 if (!"true".equals(HelperSettings.get(DONE_KEY, "false").trim())) openOver = screen;
             }
         });
+        // folder pointers ({@link Pointers}): at start-up and when a folder mod's own settings screen closes
+        ClientLifecycleEvents.CLIENT_STARTED.register(mc -> updatePointers());
+        ScreenEvents.AFTER_INIT.register((mc, screen, w, h) -> {
+            if (Pointers.watch(screen.getClass().getName())) {
+                ScreenEvents.remove(screen).register(s -> pointersPending = true);
+            }
+        });
+        ClientTickEvents.END_CLIENT_TICK.register(mc -> {
+            if (!pointersPending) return;
+            pointersPending = false;
+            updatePointers();
+        });
         // opened from the tick after the title screen is shown, not from inside its init
         ClientTickEvents.END_CLIENT_TICK.register(mc -> {
             if (openOver == null) return;
@@ -66,6 +81,15 @@ public class SetupModule implements ClientModInitializer {
             addSystemLanguageOnce();
             SetupScreen.open(over);
         });
+    }
+
+    static void updatePointers() {
+        try {
+            SetupTexts.reload();
+            Pointers.update();
+        } catch (RuntimeException | LinkageError e) {
+            LOGGER.warn("Folder pointers not checked ({})", e.toString());
+        }
     }
 
     /**

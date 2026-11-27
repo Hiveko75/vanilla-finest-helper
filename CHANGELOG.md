@@ -15,6 +15,9 @@ published) also held the fixes for the packs' mods; those moved to Vanilla Fines
   font and tooltips. Opens on the first start, from a settings icon on the title and pause screens, and
   from Mod Menu's Configure button. Texts in `config/vanilla-finest-helper/setup/` (English and
   Hungarian in the jar). The computer's language is added as a second language on the first start.
+  When a folder is kept outside the instance, a shortcut to it (and a `.txt` with the path) is written where
+  the files would normally be, kept up to date at start-up, when the setup screen applies its folders and
+  when a folder mod's settings screen closes.
 - **GUI scale (26.3 for now):** an automatic GUI scale from the window's width (`guiscale.rules`,
   `guiscale.mode` in `config/vanilla-finest-helper.properties`; 640×360 GUI pixels on 16:9 screens). Off
   while GUI Scaler is installed; the setup screen's slider then switches GUI Scaler's own setting.

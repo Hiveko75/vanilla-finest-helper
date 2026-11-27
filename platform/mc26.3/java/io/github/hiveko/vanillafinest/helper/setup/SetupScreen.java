@@ -780,6 +780,7 @@ public class SetupScreen extends Screen {
         for (Row row : rows) {
             if (!Objects.equals(folders.get(row), foldersInitial.get(row))) FolderSetup.write(row, folders.get(row));
         }
+        SetupModule.updatePointers();
         boolean shaderChanged = shader != null && !shader.equals(shaderInitial)
                 && Integrations.Iris.installed() && !Integrations.runningOnVulkan();
         boolean profileChanged = profile != null && !profile.equals(profileInitial);

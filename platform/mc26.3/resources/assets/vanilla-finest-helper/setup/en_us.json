@@ -67,6 +67,9 @@
   "folders.row.schematics": "Litematica schematics",
   "folders.row.replays": "Flashback replays",
   "folders.row.blueprints": "Axiom blueprints",
+  "pointer.name": "%s are in %s",
+  "pointer.text": "%s are kept in this folder:",
+  "pointer.note": "Written by Vanilla Finest Helper and kept up to date: change the folder on the Vanilla Finest setup screen or in the mod's own settings.",
 
   "look.profile": "Style: %s",
   "look.noprofiles": "No resource pack profiles found (Packed Packs).",

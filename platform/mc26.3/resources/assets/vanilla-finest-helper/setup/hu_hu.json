@@ -64,6 +64,9 @@
   "folders.row.schematics": "Litematica-sémák",
   "folders.row.replays": "Flashback-felvételek",
   "folders.row.blueprints": "Axiom-tervrajzok",
+  "pointer.name": "%s helye - %s",
+  "pointer.text": "%s ebben a mappában vannak:",
+  "pointer.note": "A Vanilla Finest Helper írta, és magától frissül: a mappát a Vanilla Finest beállítóképernyőjén vagy a mod saját beállításaiban lehet módosítani.",
 
   "look.profile": "Stílus: %s",
   "look.noprofiles": "Nem található erőforráscsomag-profil (Packed Packs).",
