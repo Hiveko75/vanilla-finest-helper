@@ -138,11 +138,12 @@ public final class KeyNames {
                 if (keys == null || keys.isEmpty()) return null;
                 List<String> names = new ArrayList<>();
                 for (Object k : keys) {
-                    // malilib 26.3 keeps scan codes (like Minecraft's key values); mouse buttons as button - 100
+                    // malilib keeps the key values Minecraft uses for this version (Compat.keyboard);
+                    // mouse buttons as button - 100
                     int code = ((Number) k).intValue();
                     InputConstants.Key key = code < 0
                             ? InputConstants.Type.MOUSE.getOrCreate(code + 100)
-                            : InputConstants.Type.KEYBOARD.getOrCreate(code);
+                            : Compat.keyboard(code);
                     names.add(key.getDisplayName().getString());
                 }
                 return String.join(" + ", names);

@@ -9,7 +9,6 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -150,12 +149,7 @@ final class Integrations {
 
     /** True when the game runs on Vulkan now (not the setting, which counts after a restart). */
     static boolean runningOnVulkan() {
-        try {
-            String name = RenderSystem.getDevice().getDeviceInfo().backendName();
-            return name != null && name.toLowerCase(Locale.ROOT).contains("vulkan");
-        } catch (RuntimeException | LinkageError e) {
-            return false;
-        }
+        return Compat.runningOnVulkan();
     }
 
     static boolean voxyInstalled() {
@@ -195,9 +189,7 @@ final class Integrations {
             if (on) {
                 if (inSession) common.getMethod("createInstance").invoke(null);
             } else {
-                Class<?> holderType = Class.forName("me.cortex.voxy.client.core.IVoxyRenderSystemHolder");
-                Object holder = holderType.getMethod("getNullableHolder").invoke(null);
-                if (holder != null) holderType.getMethod("voxy$shutdownRenderer").invoke(holder);
+                shutdownVoxyRenderer();
                 common.getMethod("shutdownInstance").invoke(null);
             }
             config.getClass().getMethod("save").invoke(config);
@@ -206,6 +198,22 @@ final class Integrations {
             }
         } catch (ReflectiveOperationException | LinkageError | RuntimeException e) {
             LOGGER.warn("Setup screen: cannot switch Voxy {} ({})", on ? "on" : "off", e.toString());
+        }
+    }
+
+    /**
+     * Stops Voxy's renderer: Voxy 0.2.18 and newer keep it behind IVoxyRenderSystemHolder; older ones
+     * (0.2.16 on 1.21.11) on the level renderer through IGetVoxyRenderSystem.
+     */
+    private static void shutdownVoxyRenderer() throws ReflectiveOperationException {
+        try {
+            Class<?> holderType = Class.forName("me.cortex.voxy.client.core.IVoxyRenderSystemHolder");
+            Object holder = holderType.getMethod("getNullableHolder").invoke(null);
+            if (holder != null) holderType.getMethod("voxy$shutdownRenderer").invoke(holder);
+        } catch (ClassNotFoundException e) {
+            Class<?> getter = Class.forName("me.cortex.voxy.client.core.IGetVoxyRenderSystem");
+            Object levelRenderer = net.minecraft.client.Minecraft.getInstance().levelRenderer;
+            if (getter.isInstance(levelRenderer)) getter.getMethod("voxy$shutdownRenderer").invoke(levelRenderer);
         }
     }
 

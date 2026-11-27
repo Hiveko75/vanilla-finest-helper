@@ -33,7 +33,7 @@ final class Dropdown {
     }
 
     void extract(GuiGraphicsExtractor g, Font font, int mouseX, int mouseY) {
-        g.nextStratum();
+        Compat.nextLayer(g);
         int h = height();
         g.fill(x, y, x + w, y + h, 0xFF000000);
         g.outline(x, y, w, h, 0xFFFFFFFF);
@@ -43,7 +43,7 @@ final class Dropdown {
             boolean hover = mouseX >= x + 1 && mouseX < x + w - 1 && mouseY >= ry && mouseY < ry + ROW;
             if (hover) {
                 g.fill(x + 2, ry, x + w - 2, ry + ROW, 0xFF3A3A3A);
-                if (!item.tooltip().isEmpty()) g.setComponentTooltipForNextFrame(font, item.tooltip(), mouseX, mouseY);
+                if (!item.tooltip().isEmpty()) Compat.tooltip(g, font, item.tooltip(), mouseX, mouseY);
             }
             boolean colored = item.label().indexOf('\u00a7') >= 0;
             int color = item.selected() ? 0xFFFFFF55 : hover ? 0xFFFFFFFF : 0xFFE0E0E0;

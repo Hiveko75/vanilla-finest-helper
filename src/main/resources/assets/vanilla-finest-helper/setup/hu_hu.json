@@ -27,6 +27,7 @@
   "settings.keymap.tooltip": "Az összes billentyű-hozzárendelés egy billentyűzet képén.",
 
   "settings.section.graphics": "Grafika",
+  "settings.graphics_api": "Grafikus API: %s",
   "settings.voxy": "Voxy (távoli táj): %s",
   "settings.voxy.tooltip": "A Voxy a látótávolságon túli tájat is megjeleníti. A ✔ gombbal lép életbe.",
   "settings.voxy.vulkan": "A Voxy csak OpenGL-lel működik. Válaszd az OpenGL-t, és indítsd újra a játékot.",
@@ -55,6 +56,7 @@
   "folders.onedrive": "Ez a mappa a OneDrive-on van: minden, amit ide mentesz, feltöltődik, és a OneDrive-tárhelyedet foglalja.",
   "folders.none": "A mappákat használó modok közül egy sincs telepítve.",
   "folders.change": "Módosítás…",
+  "folders.picker.title": "Válassz mappát",
   "folders.restart": "Az Axiom újraindítás után használja az új mappát.",
   "folders.row.screenshots": "Képernyőképek",
   "folders.row.schematics": "Litematica-sémák",

@@ -21,9 +21,6 @@ import io.github.hiveko.vanillafinest.helper.folders.Folders;
 import io.github.hiveko.vanillafinest.helper.homefolders.HomeFolders;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
-import org.lwjgl.sdl.SDLDialog;
-import org.lwjgl.sdl.SDL_DialogFileCallback;
-import org.lwjgl.system.MemoryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -360,46 +357,12 @@ final class FolderSetup {
 
     // ---------------------------------------------------------------- folder picker
 
-    /** The last picker's callback; freed when the next picker opens (never while SDL may still call it). */
-    private static SDL_DialogFileCallback lastCallback;
-    private static boolean pickerOpen;
-
     /**
-     * Opens the system's folder picker (SDL3, as Minecraft uses); {@code done} gets the folder on the main
-     * thread, or is not called when the player cancels.
+     * Opens the system's folder picker; {@code done} gets the folder on the main thread, or is not called
+     * when the player cancels. How it opens depends on the Minecraft version ({@link FolderPicker}).
      */
     static void choose(Path start, Consumer<Path> done) {
-        Minecraft mc = Minecraft.getInstance();
-        if (pickerOpen) return; // one picker at a time
-        if (lastCallback != null) {
-            lastCallback.free();
-            lastCallback = null;
-        }
-        SDL_DialogFileCallback callback = SDL_DialogFileCallback.create((userdata, filelist, filter) -> {
-            Path chosen = null;
-            try {
-                if (filelist != 0) {
-                    long first = MemoryUtil.memGetAddress(filelist);
-                    if (first != 0) chosen = Paths.get(MemoryUtil.memUTF8(first));
-                }
-            } catch (RuntimeException e) {
-                chosen = null;
-            }
-            Path result = chosen;
-            mc.execute(() -> {
-                pickerOpen = false;
-                if (result != null) done.accept(result);
-            });
-        });
-        lastCallback = callback;
-        pickerOpen = true;
-        try {
-            String location = start != null && Files.isDirectory(start) ? start.toString() : null;
-            SDLDialog.SDL_ShowOpenFolderDialog(callback, 0L, mc.getWindow().handle(), location, false);
-        } catch (RuntimeException | LinkageError e) {
-            LOGGER.warn("Setup screen: cannot open the folder picker ({})", e.toString());
-            pickerOpen = false;
-        }
+        Compat.choose(start, done);
     }
 
     // ---------------------------------------------------------------- JSON files

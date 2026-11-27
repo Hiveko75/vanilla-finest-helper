@@ -27,7 +27,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.options.controls.KeyBindsScreen;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -91,7 +90,7 @@ public class SetupScreen extends Screen {
 
     /** Opens the setup screen over the given screen (which it returns to). */
     public static void open(Screen parent) {
-        net.minecraft.client.Minecraft.getInstance().gui.setScreen(new SetupScreen(parent));
+        Compat.setScreen(new SetupScreen(parent));
     }
 
     // ---------------------------------------------------------------- state
@@ -300,7 +299,7 @@ public class SetupScreen extends Screen {
         int[] pa = spread(ya + 5, boxH - 10, a, 3);
         paintLines(List.of(text("settings.section.controls").getVisualOrderText()), innerX, pa[0], YELLOW);
         Button languages = button(text("settings.languages"), innerX, pa[1], colW,
-                btn -> minecraft.gui.setScreen(new LanguageSelectScreen(this, minecraft.options, minecraft.getLanguageManager())));
+                btn -> Compat.setScreen(new LanguageSelectScreen(this, minecraft.options, minecraft.getLanguageManager())));
         languages.setTooltip(Tooltip.create(text("settings.languages.tooltip")));
         add(new SensitivitySlider(innerX + colW + 8, pa[1], colW));
         paintLines(hintLines1, innerX, pa[2], HINT);
@@ -310,7 +309,7 @@ public class SetupScreen extends Screen {
                 : text("settings.keybinds.plain");
         boolean keycaps = Integrations.keycaps();
         button(keysLabel, innerX, pa[3], keycaps ? colW : innerW,
-                btn -> minecraft.gui.setScreen(new KeyBindsScreen(this, minecraft.options)));
+                btn -> Compat.setScreen(new KeyBindsScreen(this, minecraft.options)));
         if (keycaps) {
             button(text("settings.keymap"), innerX + colW + 8, pa[3], colW, btn -> Integrations.openKeycaps(this))
                     .setTooltip(Tooltip.create(text("settings.keymap.tooltip")));
@@ -321,7 +320,7 @@ public class SetupScreen extends Screen {
         paintBox(cx, yb, cw, boxH);
         int[] pb = spread(yb + 5, boxH - 10, b, 3);
         paintLines(List.of(text("settings.section.graphics").getVisualOrderText()), innerX, pb[0], YELLOW);
-        add(minecraft.options.preferredGraphicsBackend().createButton(minecraft.options, innerX, pb[1], colW));
+        add(Compat.graphicsApiButton(minecraft.options, innerX, pb[1], colW));
         boolean vulkan = Integrations.runningOnVulkan();
         if (voxyOn != null) {
             Button voxy = button(Component.literal(SetupTexts.format("settings.voxy", SetupTexts.get(voxyOn ? "on" : "off"))),
@@ -388,9 +387,7 @@ public class SetupScreen extends Screen {
         }
 
         private static double position() {
-            var values = net.minecraft.client.Minecraft.getInstance().options.renderDistance().values();
-            if (values instanceof net.minecraft.client.OptionInstance.IntRangeBase range) return range.toSliderValue(CHUNKS);
-            return (CHUNKS - 2) / 30.0;
+            return Compat.renderDistancePosition(net.minecraft.client.Minecraft.getInstance().options, CHUNKS);
         }
 
         @Override
@@ -575,7 +572,7 @@ public class SetupScreen extends Screen {
                     FolderSetup.choose(path, chosen -> {
                         String v = FolderSetup.same(chosen, FolderSetup.effective(row, "")) ? "" : chosen.toString();
                         folders.put(row, v);
-                        if (minecraft.gui.screen() == this) rebuildWidgets();
+                        if (Compat.screen() == this) rebuildWidgets();
                     }));
             y += 21;
         }
@@ -720,7 +717,7 @@ public class SetupScreen extends Screen {
         String keyProfile = Integrations.keyProfile();
         lines.add(new String[]{"ready.keybinds", keyProfile != null ? SetupTexts.format("ready.keybinds.profile", keyProfile)
                 : SetupTexts.format("ready.keybinds.default")});
-        String api = minecraft.options.preferredGraphicsBackend().get().caption().getString();
+        String api = Compat.graphicsApiName(minecraft.options);
         String voxy = voxyOn == null ? SetupTexts.format("ready.voxy.missing")
                 : SetupTexts.format(voxyOn ? "ready.voxy.on" : "ready.voxy.off");
         int rd = voxyOn != null && voxyOn ? 16 : minecraft.options.renderDistance().get();
@@ -786,7 +783,7 @@ public class SetupScreen extends Screen {
         boolean profileChanged = profile != null && !profile.equals(profileInitial);
         minecraft.options.save();
         HelperSettings.set(SetupModule.DONE_KEY, "true");
-        minecraft.gui.setScreen(parent);
+        Compat.setScreen(parent);
         if (shaderChanged) Integrations.Iris.apply(shader.file());
         if (profileChanged) Look.applyProfile(profile);
     }
@@ -796,7 +793,7 @@ public class SetupScreen extends Screen {
         // Esc: the choices on this screen are dropped; Minecraft's own settings were applied already
         HelperSettings.set(SetupModule.DONE_KEY, "true");
         minecraft.options.save();
-        minecraft.gui.setScreen(parent);
+        Compat.setScreen(parent);
     }
 
     // ---------------------------------------------------------------- drawing
@@ -818,10 +815,10 @@ public class SetupScreen extends Screen {
         boolean inWorld = minecraft.level != null;
         Identifier headerSep = inWorld ? INWORLD_HEADER_SEPARATOR : HEADER_SEPARATOR;
         Identifier footerSep = inWorld ? INWORLD_FOOTER_SEPARATOR : FOOTER_SEPARATOR;
-        g.blit(RenderPipelines.GUI_TEXTURED, footerSep, px, py, 0.0F, 0.0F, pw, 2, 32, 2);
-        g.blit(RenderPipelines.GUI_TEXTURED, headerSep, px, py + HEADER - 2, 0.0F, 0.0F, pw, 2, 32, 2);
-        g.blit(RenderPipelines.GUI_TEXTURED, footerSep, px, py + ph - FOOTER, 0.0F, 0.0F, pw, 2, 32, 2);
-        g.blit(RenderPipelines.GUI_TEXTURED, headerSep, px, py + ph - 2, 0.0F, 0.0F, pw, 2, 32, 2);
+        Compat.blit(g, footerSep, px, py, 0.0F, 0.0F, pw, 2, 32, 2);
+        Compat.blit(g, headerSep, px, py + HEADER - 2, 0.0F, 0.0F, pw, 2, 32, 2);
+        Compat.blit(g, footerSep, px, py + ph - FOOTER, 0.0F, 0.0F, pw, 2, 32, 2);
+        Compat.blit(g, headerSep, px, py + ph - 2, 0.0F, 0.0F, pw, 2, 32, 2);
 
         // header: "Welcome · 1 / 5"
         MutableComponent header = Component.literal(SetupTexts.format("title." + STEP_IDS[step])).withStyle(ChatFormatting.WHITE)
@@ -829,10 +826,10 @@ public class SetupScreen extends Screen {
         g.centeredText(font, header, width / 2, py + 4, WHITE);
 
         // footer logo, pixel-exact at GUI scales 1-6
-        int scale = Math.max(1, Math.min(6, minecraft.getWindow().getGuiScale()));
+        int scale = Math.max(1, Math.min(6, (int) minecraft.getWindow().getGuiScale()));
         int lw = 129, lh = 15;
         int lx = px + (pw - lw) / 2, ly = py + ph - FOOTER + 2 + (FOOTER - 2 - lh) / 2;
-        g.blit(RenderPipelines.GUI_TEXTURED, LOGOS[scale - 1], lx, ly, 0.0F, 0.0F, lw, lh, lw * scale, lh * scale, lw * scale, lh * scale);
+        Compat.blit(g, LOGOS[scale - 1], lx, ly, 0.0F, 0.0F, lw, lh, lw * scale, lh * scale, lw * scale, lh * scale);
 
         // step content
         if (step == 0 && welcome != null) {
@@ -844,8 +841,8 @@ public class SetupScreen extends Screen {
             if (contentNeeded > ch) {
                 int barX = px + pw - 9, thumbH = Math.max(16, ch * ch / contentNeeded);
                 int thumbY = cy + (int) ((ch - thumbH) * (scroll / (double) (contentNeeded - ch)));
-                g.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("widget/scroller_background"), barX, cy, 6, ch);
-                g.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("widget/scroller"), barX, thumbY, 6, thumbH);
+                Compat.sprite(g, Identifier.withDefaultNamespace("widget/scroller_background"), barX, cy, 6, ch);
+                Compat.sprite(g, Identifier.withDefaultNamespace("widget/scroller"), barX, thumbY, 6, thumbH);
             }
         }
 
@@ -856,13 +853,13 @@ public class SetupScreen extends Screen {
         } else {
             for (HoverTip t : hoverTips) {
                 if (t.over(mouseX, mouseY) && mouseY >= cy && mouseY < cy + ch) {
-                    g.setComponentTooltipForNextFrame(font, t.lines(), mouseX, mouseY);
+                    Compat.tooltip(g, font, t.lines(), mouseX, mouseY);
                     break;
                 }
             }
             if (step == 0 && welcome != null) {
                 URI link = welcome.linkAt(mouseX, mouseY);
-                if (link != null) g.setTooltipForNextFrame(font, Component.literal(link.toString()), mouseX, mouseY);
+                if (link != null) Compat.tooltip(g, font, Component.literal(link.toString()), mouseX, mouseY);
             }
         }
     }

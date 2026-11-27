@@ -5,11 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.ActiveTextCollector;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -140,7 +137,7 @@ final class Markdown {
                     try {
                         URI uri = URI.create(url);
                         if ("https".equalsIgnoreCase(uri.getScheme()) || "http".equalsIgnoreCase(uri.getScheme())) {
-                            style = style.withClickEvent(new ClickEvent.OpenUrl(uri));
+                            style = Compat.withLink(style, uri);
                         }
                     } catch (IllegalArgumentException e) {
                         // not a link: shown as text
@@ -268,8 +265,8 @@ final class Markdown {
             int barX = x + w - SCROLLBAR;
             int thumbH = Math.max(16, h * h / contentHeight);
             int thumbY = y + (int) ((h - thumbH) * (scroll / (contentHeight - h)));
-            g.blitSprite(RenderPipelines.GUI_TEXTURED, SCROLLER_BACKGROUND, barX, y, SCROLLBAR, h);
-            g.blitSprite(RenderPipelines.GUI_TEXTURED, SCROLLER, barX, thumbY, SCROLLBAR, thumbH);
+            Compat.sprite(g, SCROLLER_BACKGROUND, barX, y, SCROLLBAR, h);
+            Compat.sprite(g, SCROLLER, barX, thumbY, SCROLLBAR, thumbH);
         }
     }
 
@@ -281,18 +278,20 @@ final class Markdown {
     Style styleAt(double mx, double my) {
         if (!isOver(mx, my)) return null;
         int top = y - (int) Math.round(scroll);
-        ActiveTextCollector.ClickableStyleFinder finder = new ActiveTextCollector.ClickableStyleFinder(font, (int) mx, (int) my);
         for (Line l : lines) {
             int ly = top + l.y();
-            if (my >= ly && my < ly + LINE) finder.accept(x + l.x(), ly, l.text());
+            if (my >= ly && my < ly + LINE) {
+                Style s = Compat.styleAt(font, x + l.x(), ly, l.text(), (int) mx, (int) my);
+                if (s != null) return s;
+            }
         }
-        return finder.result();
+        return null;
     }
 
     /** The link under the mouse, or null. */
     URI linkAt(double mx, double my) {
         Style s = styleAt(mx, my);
-        return s != null && s.getClickEvent() instanceof ClickEvent.OpenUrl open ? open.uri() : null;
+        return s == null ? null : Compat.linkOf(s);
     }
 
     boolean scrolled(double amount) {

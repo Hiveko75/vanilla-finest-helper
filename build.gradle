@@ -14,7 +14,7 @@ base {
 }
 
 sourceSets.main {
-    java.srcDirs += ["platform/mc${mc}/java"]
+    java.srcDirs += ['platform/mc26/java', "platform/mc${mc}/java"]
     resources.srcDirs += ["platform/mc${mc}/resources"]
 }
 

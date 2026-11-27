@@ -5,7 +5,7 @@
 First version as the players' side of the Vanilla Finest modpacks. The earlier helper builds (never
 published) also held the fixes for the packs' mods; those moved to Vanilla Finest Fixes.
 
-- **Setup screen (26.3 for now):** one screen for everything the player sets, in five steps: Welcome
+- **Setup screen (all versions):** one screen for everything the player sets, in five steps: Welcome
   (Markdown text with the current key names, links), Settings (languages with Language Reload, mouse
   sensitivity, key bindings and the Multi Key Bindings profile, Keyboard Map with Keycaps, graphics API,
   Voxy on/off, GUI scale, render distance), Folders (Modpack / Minecraft / Desktop / Documents, or one
@@ -20,7 +20,11 @@ published) also held the fixes for the packs' mods; those moved to Vanilla Fines
   When a folder is kept outside the instance, a shortcut to it (and a `.txt` with the path) is written where
   the files would normally be, kept up to date at start-up, when the setup screen applies its folders and
   when a folder mod's settings screen closes.
-- **GUI scale (26.3 for now):** an automatic GUI scale from the window's width (`guiscale.rules`,
+  On 26.2, 26.1.2, 1.21.11 and 1.21.1 the folder picker is LWJGL's tinyfd; before 26.2 there is no graphics
+  API to choose (a greyed-out "Graphics API: OpenGL" button) and Vulkan is never reported. On 1.21.11 (Voxy
+  0.2.16) Voxy is switched off through its older renderer interface; 1.21.1 has no Voxy, and Screenshot
+  Gallery 1.2 there has no folder setting, so that row is not shown.
+- **GUI scale (all versions):** an automatic GUI scale from the window's width (`guiscale.rules`,
   `guiscale.mode` in `config/vanilla-finest-helper.properties`; 640×360 GUI pixels on 16:9 screens). Off
   while GUI Scaler is installed; the setup screen's slider then switches GUI Scaler's own setting.
 - **Folders (all versions):** where Flashback saves and lists replays (without Flashback Settings; the

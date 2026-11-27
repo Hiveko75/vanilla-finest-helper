@@ -12,7 +12,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -77,7 +76,7 @@ public class SetupModule implements ClientModInitializer {
             if (openOver == null) return;
             Screen over = openOver;
             openOver = null;
-            if (mc.gui.screen() != over) return;
+            if (Compat.screen() != over) return;
             addSystemLanguageOnce();
             SetupScreen.open(over);
         });
@@ -139,9 +138,8 @@ public class SetupModule implements ClientModInitializer {
         try {
             SetupTexts.reload();
             List<AbstractWidget> widgets = Screens.getWidgets(screen);
-            SpriteIconButton icon = SpriteIconButton.builder(Component.literal(SetupTexts.format("icon.tooltip")),
-                            b -> SetupScreen.open(screen), true)
-                    .size(20, 20).sprite(ICON, 15, 15).withTootip().build();
+            AbstractWidget icon = Compat.iconButton(Component.literal(SetupTexts.format("icon.tooltip")),
+                    b -> SetupScreen.open(screen), ICON);
 
             // the last of Minecraft's own icons decides the row and the place
             AbstractWidget anchor = null;

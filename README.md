@@ -4,7 +4,7 @@ The players' side of the Vanilla Finest modpacks, in one Fabric mod: the setup s
 scale, and where screenshots, schematics, replays and blueprints are kept. It changes little between pack
 versions.
 
-## Setup screen (26.3 for now)
+## Setup screen (all versions)
 
 One screen for everything the player sets, in five steps: **Welcome**, **Settings**, **Folders**, **Look**
 and **Ready to play**. It opens on the first start of an instance (`setup.done=true` in
@@ -41,7 +41,7 @@ screens, and from Mod Menu's Configure button.
   With Iris Shader Folder installed, the list uses its filter, order, colours and tooltips
   (`config/iris_shader_folder.properties`), the same as Iris's own shader list.
 
-## GUI scale module (26.3 for now)
+## GUI scale module (all versions)
 
 An automatic GUI scale chosen from the window's width: `guiscale.rules` (`width:scale` pairs; the highest
 width not wider than the window wins) and `guiscale.mode` (`auto` or a number) in
@@ -147,6 +147,14 @@ version's `CHANGELOG.md` section as notes. Locally (Java 25 and 21):
 ./gradlew -p mc1.21.11 build     # -> mc1.21.11/build/libs
 ./gradlew -p mc1.21.1 build      # -> mc1.21.1/build/libs
 ```
+
+The setup screen and the GUI scale module are written once, for 26.x, in `platform/mc26/java` (used by
+the 26.3, 26.2 and 26.1.2 builds). What differs by version is in `platform/mc<version>/java/.../setup/Compat.java`:
+the folder picker (SDL3 on 26.3, LWJGL's tinyfd on GLFW versions), the key values malilib keeps, showing a
+screen (`Minecraft.gui` from 26.2), the graphics API (OpenGL or Vulkan from 26.2, OpenGL before), drawing
+calls, tooltips, links and the icon button. The 1.21.11 and 1.21.1 builds copy `platform/mc26/java` with a
+short list of renames (`GuiGraphicsExtractor` → `GuiGraphics`, `extractRenderState` → `render`,
+`Identifier` → `ResourceLocation` on 1.21.1, the mouse methods on 1.21.1; see their `build.gradle`).
 
 Client-side only. Settings are in `config/vanilla-finest-helper.properties`.
 

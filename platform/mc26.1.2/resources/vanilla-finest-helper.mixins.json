@@ -4,7 +4,8 @@
   "plugin": "io.github.hiveko.vanillafinest.helper.MixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "folders.FlashbackMixin"
+    "folders.FlashbackMixin",
+    "guiscale.GuiScaleMixin"
   ],
   "injectors": {
     "defaultRequire": 1

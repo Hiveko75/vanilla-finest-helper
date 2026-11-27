@@ -30,6 +30,7 @@
   "settings.keymap.tooltip": "Every key binding on a picture of the keyboard.",
 
   "settings.section.graphics": "Graphics",
+  "settings.graphics_api": "Graphics API: %s",
   "settings.voxy": "Voxy (distant terrain): %s",
   "settings.voxy.tooltip": "Voxy draws the land far beyond the render distance. Applied with ✔.",
   "settings.voxy.vulkan": "Voxy only works with OpenGL. Choose OpenGL and restart the game to use it.",
@@ -58,6 +59,7 @@
   "folders.onedrive": "This folder is inside OneDrive: everything saved there is uploaded and uses your OneDrive space.",
   "folders.none": "None of the folder mods are installed.",
   "folders.change": "Change…",
+  "folders.picker.title": "Choose a folder",
   "folders.restart": "Axiom uses the new folder after a restart.",
   "folders.row.screenshots": "Screenshots",
   "folders.row.schematics": "Litematica schematics",

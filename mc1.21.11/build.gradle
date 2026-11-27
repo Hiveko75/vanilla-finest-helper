@@ -15,21 +15,57 @@ base {
 }
 
 sourceSets.main {
-    java.srcDirs = [new File(root, 'src/main/java'), new File(root, 'platform/mc1.21.11/java')]
+    java.srcDirs = [new File(root, 'src/main/java'), layout.buildDirectory.dir('generated/mc26-for-1.21.11').get().asFile,
+                    new File(root, 'platform/mc1.21.11/java')]
     resources.srcDirs = [new File(root, 'src/main/resources'), new File(root, 'platform/mc1.21.11/resources')]
 }
+
+repositories {
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
+}
+
+// The setup screen and GUI scale module are written once for 26.x (platform/mc26/java). 1.21.11 has the
+// same GUI code under older names, so they are copied here with these renames (Minecraft 26.1 renamed
+// GuiGraphics to GuiGraphicsExtractor and its render methods to extract..., Fabric API renamed
+// Screens.getButtons to getWidgets). Everything else that differs is in platform/mc1.21.11/java (Compat).
+def mc26Renames = [
+    'logo.extractRenderState('       : 'logo.renderLogo(',
+    'super.extractRenderState('      : 'super.render(',
+    'public void extractRenderState(': 'public void render(',
+    'extractMenuBackground('         : 'renderMenuBackground(',
+    'GuiGraphicsExtractor'           : 'GuiGraphics',
+    'g.text('                        : 'g.drawString(',
+    'g.centeredText('                : 'g.drawCenteredString(',
+    'g.outline('                     : 'g.renderOutline(',
+    'Screens.getWidgets('            : 'Screens.getButtons(',
+    'resizeGui'                      : 'resizeDisplay',
+]
+def mc26Sources = tasks.register('mc26Sources', Copy) {
+    from(new File(root, 'platform/mc26/java'))
+    into(layout.buildDirectory.dir('generated/mc26-for-1.21.11'))
+    inputs.property('renames', mc26Renames.toString())
+    filter { String line -> mc26Renames.inject(line) { l, e -> l.replace(e.key, e.value) } }
+}
+tasks.named('compileJava') { dependsOn mc26Sources }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    // Mod Menu's API for the setup screen's Configure button (Mod Menu 17.0.0, Modrinth version Tyk71iSw; not bundled)
+    modCompileOnly "maven.modrinth:modmenu:Tyk71iSw"
 }
 
 processResources {
     def props = [version: project.version, minecraft_range: project.minecraft_range,
                  loader_min: project.loader_min, java_version: '21',
-                 client_extra: '', entrypoints_extra: '']
+                 client_extra: ', "io.github.hiveko.vanillafinest.helper.setup.SetupModule"',
+                 entrypoints_extra: ',\n    "modmenu": ["io.github.hiveko.vanillafinest.helper.setup.ModMenuEntry"]']
     inputs.properties props
     filesMatching("fabric.mod.json") { expand props }
 }

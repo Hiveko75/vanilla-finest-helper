@@ -3,7 +3,7 @@
   "id": "vanilla-finest-helper",
   "version": "${version}",
   "name": "Vanilla Finest Helper",
-  "description": "The players' side of the Vanilla Finest modpacks: the setup screen (languages, controls, graphics, folders, look; 26.3 for now), an automatic GUI scale, where Flashback saves replays and Axiom keeps blueprints, and the shared-folder option. Fixes for the packs' mods are in Vanilla Finest Fixes.",
+  "description": "The players' side of the Vanilla Finest modpacks: the setup screen (languages, controls, graphics, folders, look), an automatic GUI scale, where Flashback saves replays and Axiom keeps blueprints, and the shared-folder option. Fixes for the packs' mods are in Vanilla Finest Fixes.",
   "authors": ["Hiveko"],
   "contact": {
     "sources": "https://github.com/Hiveko75/vanilla-finest-helper",
