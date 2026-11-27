@@ -673,7 +673,7 @@ public class SetupScreen extends Screen {
     private List<Component> profileTooltip(Look.Profile p) {
         List<Component> tip = new ArrayList<>();
         tip.add(Component.literal(p.name()).withStyle(ChatFormatting.WHITE));
-        for (String line : p.description().split("\n")) {
+        for (String line : SetupTexts.profileDescription(p.description()).split("\n")) {
             if (line.isBlank()) continue;
             for (FormattedCharSequence l : wrap(line.strip(), 240)) tip.add(toComponent(l).withStyle(ChatFormatting.GRAY));
         }

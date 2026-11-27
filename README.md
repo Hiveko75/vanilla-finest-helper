@@ -47,10 +47,20 @@ Iris Shader Folder's tooltip texts are in one language. With Shader Folder 1.4.x
 shows each text in the game's language when `<lang>.json` (in the jar or in
 `config/vanilla-finest-helper/setup/`) has a `"shader.tooltips"` object that maps the English text to the
 translation, in Iris's shader list and on the setup screen. Without a translation the text stays as it is.
+A written `\n` in a tooltip rule becomes a line break (Shader Folder keeps each rule on one line), and a
+text without a translation of its own is translated line by line.
 
 A shader pack that has a tooltip rule there shows only that tooltip: Shader Folder would put the pack's own
 description (from its `shaders/lang` file or `pack.json`) above it, and the helper leaves that out. Packs
 without a rule, such as ones added by hand, keep their own description.
+
+## Packed Packs profile descriptions (all versions)
+
+Packed Packs keeps one description per resource or data pack profile, in one language. With Packed Packs
+2.4.x installed, the profile list's tooltip (and the setup screen's Style tooltip) shows each line in the
+game's language when `<lang>.json` has a `"profile.descriptions"` object that maps the English line to the
+translation. The profile files and Packed Packs' edit form keep the English text, so it is never saved
+translated.
 
 ## GUI scale module (all versions)
 

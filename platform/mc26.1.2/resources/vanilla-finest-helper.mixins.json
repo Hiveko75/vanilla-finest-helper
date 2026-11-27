@@ -6,6 +6,7 @@
   "client": [
     "folders.FlashbackMixin",
     "guiscale.GuiScaleMixin",
+    "packedpacks.PackedPacksProfileTooltipMixin",
     "shaderfolder.ShaderFolderDescriptionMixin",
     "shaderfolder.ShaderFolderTooltipMixin"
   ],

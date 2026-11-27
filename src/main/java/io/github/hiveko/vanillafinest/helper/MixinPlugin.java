@@ -38,6 +38,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
         if (mixinClassName.endsWith(".mixin.folders.FlashbackMixin")) return "flashback";
         if (mixinClassName.endsWith(".mixin.shaderfolder.ShaderFolderTooltipMixin")) return "iris_shader_folder";
         if (mixinClassName.endsWith(".mixin.shaderfolder.ShaderFolderDescriptionMixin")) return "iris_shader_folder";
+        if (mixinClassName.endsWith(".mixin.packedpacks.PackedPacksProfileTooltipMixin")) return "packed_packs";
         return null;
     }
 

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -82,33 +83,69 @@ public final class SetupTexts {
         return KeyNames.fill(text);
     }
 
-    private static String tooltipLang;
-    private static JsonObject tooltipTexts = new JsonObject();
-    private static long tooltipRead;
+    private static final Map<String, JsonObject> groupTexts = new HashMap<>();
+    private static String groupLang;
+    private static long groupRead;
 
     /**
-     * An Iris Shader Folder tooltip text (config/iris_shader_folder.properties, one language only) in the game's
-     * language: {@code "shader.tooltips"} in {@code <lang>.json} maps the English text to the translation. Read
-     * again at most every 5 seconds (as Shader Folder refreshes its own tooltips), so edits count without a
-     * restart. Without a translation the text stays as it is.
+     * A translation from an object of English text -> translation in {@code <lang>.json} (in the jar or the config
+     * folder), for texts other mods keep in one language. Read again at most every 5 seconds, so edits count without
+     * a restart. Without a translation (or in English) the text stays as it is.
      */
-    public static String shaderTooltip(String text) {
+    private static String translated(String group, String text) {
         if (text == null || text.isBlank()) return text;
         try {
             String lang = language();
             if (lang.equals("en_us")) return text;
             long now = System.currentTimeMillis();
-            if (!lang.equals(tooltipLang) || now - tooltipRead > 5000) {
-                JsonElement e = readJson(lang + ".json").get("shader.tooltips");
-                tooltipTexts = e != null && e.isJsonObject() ? e.getAsJsonObject() : new JsonObject();
-                tooltipLang = lang;
-                tooltipRead = now;
+            if (!lang.equals(groupLang) || now - groupRead > 5000) {
+                groupTexts.clear();
+                groupLang = lang;
+                groupRead = now;
             }
-            JsonElement t = tooltipTexts.get(text.strip());
+            JsonObject texts = groupTexts.computeIfAbsent(group, g -> {
+                JsonElement e = readJson(lang + ".json").get(g);
+                return e != null && e.isJsonObject() ? e.getAsJsonObject() : new JsonObject();
+            });
+            JsonElement t = texts.get(text.strip());
             return t != null && t.isJsonPrimitive() ? t.getAsString() : text;
         } catch (RuntimeException | LinkageError e) {
             return text;
         }
+    }
+
+    /**
+     * An Iris Shader Folder tooltip text (config/iris_shader_folder.properties, one language and one line only) as
+     * it is shown: a written {@code \n} becomes a line break (the config keeps each rule on one line), and the text
+     * is put in the game's language from {@code "shader.tooltips"} in {@code <lang>.json}: the whole text, else
+     * line by line (English text or line -> translation).
+     */
+    public static String shaderTooltip(String text) {
+        if (text == null || text.isBlank()) return text;
+        String shown = text.replace("\\n", "\n");
+        String whole = translated("shader.tooltips", shown);
+        return whole.equals(shown) ? byLine("shader.tooltips", shown) : whole;
+    }
+
+    /**
+     * A Packed Packs profile description (resource and data pack profiles, one language only) in the game's
+     * language, line by line, from {@code "profile.descriptions"} in {@code <lang>.json} (English line ->
+     * translation). Lines without a translation stay as they are.
+     */
+    public static String profileDescription(String text) {
+        return byLine("profile.descriptions", text);
+    }
+
+    private static String byLine(String group, String text) {
+        if (text == null || text.isBlank()) return text;
+        String[] lines = text.split("\n", -1);
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < lines.length; i++) {
+            if (i > 0) out.append('\n');
+            String line = lines[i];
+            out.append(line.isBlank() ? line : translated(group, line));
+        }
+        return out.toString();
     }
 
     public static JsonArray array(String key) {
