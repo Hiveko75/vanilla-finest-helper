@@ -20,12 +20,13 @@ screens, and from Mod Menu's Configure button.
   Bindings (profile name), Keycaps (Keyboard Map), Voxy, Iris, Iris Shader Folder, Packed Packs
   (profiles), Screenshot Gallery, Litematica, Flashback (Settings), Axiom, EaseGUI (animations kept off
   this screen).
-- Texts: `assets/vanilla-finest-helper/setup/<language>.json` and `welcome.md` / `welcome.<language>.md`
-  in the jar (English and Hungarian); a file with the same name in `config/vanilla-finest-helper/setup/`
-  wins, so the wording changes without a new build. `{key:<key binding id>}` (or `{key:minihud:<hotkey>}`
-  for malilib) shows a key's current name.
-  The packs ship `config/vanilla-finest-helper/setup/welcome.md` and `welcome.hu_hu.md`, so the Welcome page
-  is edited in the pack (reopen the setup screen to see the change).
+- Texts: `assets/vanilla-finest-helper/setup/<language>.json` in the jar (English and Hungarian); a file
+  with the same name in `config/vanilla-finest-helper/setup/` wins per text, so the wording changes without
+  a new build. `{key:<key binding id>}` (or `{key:minihud:<hotkey>}` for malilib) shows a key's current name.
+- **Welcome text:** the modpack's own, so the jar has none. The pack ships
+  `config/vanilla-finest-helper/setup/welcome.md` (Markdown) and `welcome.<language>.md` for other
+  languages (Vanilla Finest: `welcome.hu_hu.md`); reopen the setup screen to see a change. Without one the
+  Welcome page says which file to create and where (`welcome.missing` in the language files).
 - **Folder pointers:** when a folder is kept outside the instance (the Minecraft, Desktop or Documents
   preset, or a folder set in the mod's own settings), a shortcut is written where the files would normally
   be, e.g. `screenshots/Screenshots are in Documents - Minecraft - screenshots.url` (`.webloc` on macOS,

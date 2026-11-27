@@ -19,20 +19,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The setup screen's texts and data files. Defaults are in the jar ({@code assets/vanilla-finest-helper/setup/});
- * a file with the same name in {@code config/vanilla-finest-helper/setup/} wins, so the wording can be changed
- * without recompiling. Read again every time the setup screen opens.
+ * The setup screen's texts and data files, from {@code config/vanilla-finest-helper/setup/}, read again every time
+ * the setup screen opens, so the wording can be changed without recompiling.
  *
  * <ul>
- *   <li>{@code <lang>.json}: labels and hints. English is the base; the game's language is laid over it
- *       (jar first, then the config folder), so a missing text falls back to English.</li>
- *   <li>{@code welcome.md} / {@code welcome.<lang>.md}: the Welcome page ({@link Markdown}).</li>
+ *   <li>{@code <lang>.json}: labels and hints. Defaults are in the jar ({@code assets/vanilla-finest-helper/setup/});
+ *       a file with the same name in the config folder wins per text. English is the base; the game's language is
+ *       laid over it (jar first, then the config folder), so a missing text falls back to English.</li>
+ *   <li>{@code welcome.md} / {@code welcome.<lang>.md}: the Welcome page ({@link Markdown}). Only from the config
+ *       folder: the welcome text is the modpack's own, so the jar has none. Without one the page says which file
+ *       to create ({@code welcome.missing}).</li>
  * </ul>
  */
 public final class SetupTexts {
     private static final Logger LOGGER = LoggerFactory.getLogger("Vanilla Finest Helper");
     private static final String JAR_DIR = "/assets/vanilla-finest-helper/setup/";
     private static JsonObject texts = new JsonObject();
+    private static boolean welcomeMissingLogged;
 
     private SetupTexts() {}
 
@@ -84,12 +87,28 @@ public final class SetupTexts {
         return e != null && e.isJsonArray() ? e.getAsJsonArray() : new JsonArray();
     }
 
-    /** The Welcome page in the game's language, else the default one. */
+    /**
+     * The modpack's Welcome page in the game's language, else its default one; without either, a page that says
+     * which file to create.
+     */
     public static String welcome() {
         String lang = language();
-        String text = readText("welcome." + lang + ".md");
-        if (text == null) text = readText("welcome.md");
-        return text == null ? "" : text;
+        String text = readConfigText("welcome." + lang + ".md");
+        if (text == null) text = readConfigText("welcome.md");
+        if (text != null) return text;
+        if (!welcomeMissingLogged) {
+            welcomeMissingLogged = true;
+            LOGGER.info("Setup screen: no welcome text; create {} (Markdown) to show one", configDir().resolve("welcome.md"));
+        }
+        return format("welcome.missing", shown(configDir()));
+    }
+
+    /** A folder as the player finds it: relative to the instance when it is inside, with / and a trailing /. */
+    private static String shown(Path dir) {
+        Path game = FabricLoader.getInstance().getGameDir().toAbsolutePath().normalize();
+        Path abs = dir.toAbsolutePath().normalize();
+        String text = (abs.startsWith(game) ? game.relativize(abs) : abs).toString().replace('\\', '/');
+        return text.endsWith("/") ? text : text + "/";
     }
 
     // ---------------------------------------------------------------- reading
@@ -106,18 +125,14 @@ public final class SetupTexts {
         for (Map.Entry<String, JsonElement> e : from.entrySet()) into.add(e.getKey(), e.getValue());
     }
 
-    private static String readText(String name) {
+    /** A text file from the config folder only, or null. */
+    private static String readConfigText(String name) {
         Path file = configDir().resolve(name);
-        if (Files.isRegularFile(file)) {
-            try {
-                return Files.readString(file, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                LOGGER.warn("Setup screen: cannot read {} ({})", file, e.toString());
-            }
-        }
-        try (InputStream in = SetupTexts.class.getResourceAsStream(JAR_DIR + name)) {
-            return in == null ? null : new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        if (!Files.isRegularFile(file)) return null;
+        try {
+            return Files.readString(file, StandardCharsets.UTF_8);
         } catch (IOException e) {
+            LOGGER.warn("Setup screen: cannot read {} ({})", file, e.toString());
             return null;
         }
     }

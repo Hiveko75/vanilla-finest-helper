@@ -18,6 +18,7 @@
     {"label": "Gallery", "url": "https://modrinth.com/modpack/vanilla-finest-survival/gallery"},
     {"label": "Discord", "url": "https://discord.gg/4Mw9fQ83nf"}
   ],
+  "welcome.missing": "## No welcome text yet\n\nThis page shows the modpack's own welcome text, which is not part of the mod. To add one, create **welcome.md** in this folder of the instance:\n\n> %s\n\nWrite it in Markdown: # and ## headings, - lists, **bold**, *italic* and [links](https://modrinth.com). For another language add **welcome.<language>.md** as well (for example welcome.hu_hu.md). Reopen this screen to see the change.",
 
   "settings.section.controls": "Language & Controls",
   "settings.languages": "Languages…",

@@ -14,7 +14,8 @@ published) also held the fixes for the packs' mods; those moved to Vanilla Fines
   title screen (panorama, blur, the Minecraft logo, a fixed 430×262 panel) with Minecraft's own widgets,
   font and tooltips. Opens on the first start, from a settings icon on the title and pause screens, and
   from Mod Menu's Configure button. Texts in `config/vanilla-finest-helper/setup/` (English and
-  Hungarian in the jar). The computer's language is added as a second language on the first start.
+  Hungarian labels in the jar). The welcome text is the modpack's own `welcome.md` there; the jar has none,
+  and without it the Welcome page says which file to create. The computer's language is added as a second language on the first start.
   When a folder is kept outside the instance, a shortcut to it (and a `.txt` with the path) is written where
   the files would normally be, kept up to date at start-up, when the setup screen applies its folders and
   when a folder mod's settings screen closes.
