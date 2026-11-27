@@ -37,6 +37,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
     static String moduleKey(String mixinClassName) {
         if (mixinClassName.endsWith(".mixin.folders.FlashbackMixin")) return "flashback";
         if (mixinClassName.endsWith(".mixin.shaderfolder.ShaderFolderTooltipMixin")) return "iris_shader_folder";
+        if (mixinClassName.endsWith(".mixin.shaderfolder.ShaderFolderDescriptionMixin")) return "iris_shader_folder";
         return null;
     }
 

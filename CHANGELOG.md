@@ -28,7 +28,8 @@ published) also held the fixes for the packs' mods; those moved to Vanilla Fines
   Gallery 1.2 there has no folder setting, so that row is not shown.
 - **Shader Folder tooltips (all versions):** Iris Shader Folder's one-language tooltip texts are shown in
   the game's language from `"shader.tooltips"` in the helper's `<lang>.json` (English text → translation),
-  in Iris's shader list and on the setup screen.
+  in Iris's shader list and on the setup screen. A pack with a tooltip rule shows only that tooltip, without
+  the pack's own description above it (packs without a rule keep theirs).
 - **GUI scale (all versions):** an automatic GUI scale from the window's width (`guiscale.rules`,
   `guiscale.mode` in `config/vanilla-finest-helper.properties`; 640×360 GUI pixels on 16:9 screens). Off
   while GUI Scaler is installed; the setup screen's slider then switches GUI Scaler's own setting.

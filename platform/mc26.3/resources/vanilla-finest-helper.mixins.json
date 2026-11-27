@@ -6,6 +6,7 @@
   "client": [
     "folders.FlashbackMixin",
     "guiscale.GuiScaleMixin",
+    "shaderfolder.ShaderFolderDescriptionMixin",
     "shaderfolder.ShaderFolderTooltipMixin"
   ],
   "injectors": {

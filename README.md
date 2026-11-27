@@ -48,6 +48,10 @@ shows each text in the game's language when `<lang>.json` (in the jar or in
 `config/vanilla-finest-helper/setup/`) has a `"shader.tooltips"` object that maps the English text to the
 translation, in Iris's shader list and on the setup screen. Without a translation the text stays as it is.
 
+A shader pack that has a tooltip rule there shows only that tooltip: Shader Folder would put the pack's own
+description (from its `shaders/lang` file or `pack.json`) above it, and the helper leaves that out. Packs
+without a rule, such as ones added by hand, keep their own description.
+
 ## GUI scale module (all versions)
 
 An automatic GUI scale chosen from the window's width: `guiscale.rules` (`width:scale` pairs; the highest
