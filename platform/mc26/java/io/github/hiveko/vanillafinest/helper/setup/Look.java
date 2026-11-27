@@ -160,7 +160,8 @@ final class Look {
     /**
      * Every shader pack in Iris's shaderpacks folder, in Iris's list order. With Iris Shader Folder, its
      * filter and order are used, and its names, colours and tooltips (config/iris_shader_folder.properties).
-     * "No shaders" comes last (the lightest choice). The active pack is always in the list.
+     * "No shaders" comes first (the lightest choice; the pack's list goes from light to demanding). The active
+     * pack is always in the list.
      */
     static List<Shader> shaders() {
         List<String> packs = Integrations.Iris.packs();
@@ -168,6 +169,7 @@ final class Look {
         String active = Integrations.Iris.pack();
         if (!active.isEmpty() && !packs.contains(active) && Integrations.Iris.enabled()) packs.add(active);
         List<Shader> out = new ArrayList<>();
+        out.add(Shader.NONE);
         for (String file : packs) {
             String name = withoutZip(file);
             String tooltip = "";
@@ -177,7 +179,6 @@ final class Look {
             }
             out.add(new Shader(file, name, tooltip));
         }
-        out.add(Shader.NONE);
         return out;
     }
 

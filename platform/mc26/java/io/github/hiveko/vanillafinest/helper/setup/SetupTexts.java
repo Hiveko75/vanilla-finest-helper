@@ -82,6 +82,35 @@ public final class SetupTexts {
         return KeyNames.fill(text);
     }
 
+    private static String tooltipLang;
+    private static JsonObject tooltipTexts = new JsonObject();
+    private static long tooltipRead;
+
+    /**
+     * An Iris Shader Folder tooltip text (config/iris_shader_folder.properties, one language only) in the game's
+     * language: {@code "shader.tooltips"} in {@code <lang>.json} maps the English text to the translation. Read
+     * again at most every 5 seconds (as Shader Folder refreshes its own tooltips), so edits count without a
+     * restart. Without a translation the text stays as it is.
+     */
+    public static String shaderTooltip(String text) {
+        if (text == null || text.isBlank()) return text;
+        try {
+            String lang = language();
+            if (lang.equals("en_us")) return text;
+            long now = System.currentTimeMillis();
+            if (!lang.equals(tooltipLang) || now - tooltipRead > 5000) {
+                JsonElement e = readJson(lang + ".json").get("shader.tooltips");
+                tooltipTexts = e != null && e.isJsonObject() ? e.getAsJsonObject() : new JsonObject();
+                tooltipLang = lang;
+                tooltipRead = now;
+            }
+            JsonElement t = tooltipTexts.get(text.strip());
+            return t != null && t.isJsonPrimitive() ? t.getAsString() : text;
+        } catch (RuntimeException | LinkageError e) {
+            return text;
+        }
+    }
+
     public static JsonArray array(String key) {
         JsonElement e = texts.get(key);
         return e != null && e.isJsonArray() ? e.getAsJsonArray() : new JsonArray();

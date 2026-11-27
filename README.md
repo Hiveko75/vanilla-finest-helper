@@ -39,7 +39,14 @@ screens, and from Mod Menu's Configure button.
   real folder link, so exporting the instance does not copy the shared files.
 - Look page: "Style" is the Packed Packs profile; "Shaders" lists every shader pack in Iris's folder.
   With Iris Shader Folder installed, the list uses its filter, order, colours and tooltips
-  (`config/iris_shader_folder.properties`), the same as Iris's own shader list.
+  (`config/iris_shader_folder.properties`), the same as Iris's own shader list. "None" comes first.
+
+## Shader Folder tooltips (all versions)
+
+Iris Shader Folder's tooltip texts are in one language. With Shader Folder 1.4.x installed, the helper
+shows each text in the game's language when `<lang>.json` (in the jar or in
+`config/vanilla-finest-helper/setup/`) has a `"shader.tooltips"` object that maps the English text to the
+translation, in Iris's shader list and on the setup screen. Without a translation the text stays as it is.
 
 ## GUI scale module (all versions)
 

@@ -331,10 +331,12 @@ final class Integrations {
         /** Its filter and its order, as in Iris's shader list. */
         static List<String> arrange(List<String> packs) {
             try {
+                // shouldFilterShaderPack is true for a pack that passes the filter (is shown) and false for
+                // one a filter pattern removes, despite its name (Shader Folder 1.4.3)
                 Object filter = system("ShaderFilterSystem");
-                Method hide = filter.getClass().getMethod("shouldFilterShaderPack", String.class);
+                Method passes = filter.getClass().getMethod("shouldFilterShaderPack", String.class);
                 List<String> shown = new ArrayList<>();
-                for (String p : packs) if (!Boolean.TRUE.equals(hide.invoke(filter, p))) shown.add(p);
+                for (String p : packs) if (Boolean.TRUE.equals(passes.invoke(filter, p))) shown.add(p);
                 Object reorder = system("ShaderReorderSystem");
                 Object ordered = reorder.getClass().getMethod("reorderShaderPacks", List.class).invoke(reorder, shown);
                 List<String> out = new ArrayList<>();

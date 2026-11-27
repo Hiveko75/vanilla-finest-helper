@@ -17,6 +17,8 @@ published) also held the fixes for the packs' mods; those moved to Vanilla Fines
   Hungarian labels in the jar). The welcome text (`welcome.md`) and its link buttons (`welcome.links`) are the
   modpack's own, kept there; the jar has neither, and without a text the Welcome page says which file to
   create. The computer's language is added as a second language on the first start.
+  The Look page lists every shader pack (it showed only the active one: Shader Folder's filter answer was
+  read the wrong way round), with "None" first, as the pack's list goes from light to demanding.
   When a folder is kept outside the instance, a shortcut to it (and a `.txt` with the path) is written where
   the files would normally be, kept up to date at start-up, when the setup screen applies its folders and
   when a folder mod's settings screen closes.
@@ -24,6 +26,9 @@ published) also held the fixes for the packs' mods; those moved to Vanilla Fines
   API to choose (a greyed-out "Graphics API: OpenGL" button) and Vulkan is never reported. On 1.21.11 (Voxy
   0.2.16) Voxy is switched off through its older renderer interface; 1.21.1 has no Voxy, and Screenshot
   Gallery 1.2 there has no folder setting, so that row is not shown.
+- **Shader Folder tooltips (all versions):** Iris Shader Folder's one-language tooltip texts are shown in
+  the game's language from `"shader.tooltips"` in the helper's `<lang>.json` (English text → translation),
+  in Iris's shader list and on the setup screen.
 - **GUI scale (all versions):** an automatic GUI scale from the window's width (`guiscale.rules`,
   `guiscale.mode` in `config/vanilla-finest-helper.properties`; 640×360 GUI pixels on 16:9 screens). Off
   while GUI Scaler is installed; the setup screen's slider then switches GUI Scaler's own setting.

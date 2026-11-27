@@ -10,8 +10,9 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 /**
  * Applies the Folders module's Flashback mixin only when Flashback is installed in a version the module
- * was made for ({@link ModuleCheck}) and Flashback Settings is not (it sets the replay folder itself).
- * Otherwise it is skipped, so nothing fails at startup.
+ * was made for ({@link ModuleCheck}) and Flashback Settings is not (it sets the replay folder itself), and
+ * the Iris Shader Folder tooltip mixin only with Shader Folder in a version it was made for. Otherwise they
+ * are skipped, so nothing fails at startup.
  */
 public class MixinPlugin implements IMixinConfigPlugin {
     @Override
@@ -35,6 +36,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
     /** The {@link ModuleCheck} key a mixin belongs to, or null for mixins that always apply. */
     static String moduleKey(String mixinClassName) {
         if (mixinClassName.endsWith(".mixin.folders.FlashbackMixin")) return "flashback";
+        if (mixinClassName.endsWith(".mixin.shaderfolder.ShaderFolderTooltipMixin")) return "iris_shader_folder";
         return null;
     }
 
