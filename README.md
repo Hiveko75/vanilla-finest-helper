@@ -26,7 +26,10 @@ screens, and from Mod Menu's Configure button.
 - **Welcome text:** the modpack's own, so the jar has none. The pack ships
   `config/vanilla-finest-helper/setup/welcome.md` (Markdown) and `welcome.<language>.md` for other
   languages (Vanilla Finest: `welcome.hu_hu.md`); reopen the setup screen to see a change. Without one the
-  Welcome page says which file to create and where (`welcome.missing` in the language files).
+  Welcome page says which file to create and where (`welcome.missing` in the language files). The link
+  buttons under it (up to four) are the pack's too: `welcome.links` in the pack's
+  `config/vanilla-finest-helper/setup/en_us.json` (and `<language>.json` for translated labels), e.g.
+  `"welcome.links": [{"label": "Discord", "url": "https://…"}]`; none in the jar.
 - **Folder pointers:** when a folder is kept outside the instance (the Minecraft, Desktop or Documents
   preset, or a folder set in the mod's own settings), a shortcut is written where the files would normally
   be, e.g. `screenshots/Screenshots are in Documents - Minecraft - screenshots.url` (`.webloc` on macOS,

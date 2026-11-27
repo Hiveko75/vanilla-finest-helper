@@ -10,12 +10,7 @@
   "title.look": "Megjelenés",
   "title.ready": "Indulhat a játék",
 
-  "welcome.links": [
-    {"label": "Modrinth-oldal", "url": "https://modrinth.com/modpack/vanilla-finest-survival"},
-    {"label": "Galéria", "url": "https://modrinth.com/modpack/vanilla-finest-survival/gallery"},
-    {"label": "Discord", "url": "https://discord.gg/4Mw9fQ83nf"}
-  ],
-  "welcome.missing": "## Még nincs üdvözlő szöveg\n\nEz az oldal a modcsomag saját üdvözlő szövegét mutatja, ami nem része a modnak. Hozd létre a **welcome.md** fájlt a modcsomag mappájában, itt:\n\n> %s\n\nMarkdown formátumban írd: címsorok (# és ##), felsorolás (-), **félkövér**, *dőlt* és [hivatkozások](https://modrinth.com). Más nyelvhez készíts **welcome.<nyelv>.md** fájlt is (például welcome.hu_hu.md). A változás a képernyő újbóli megnyitásakor látszik.",
+  "welcome.missing": "## Még nincs üdvözlő szöveg\n\nEz az oldal a modcsomag saját üdvözlő szövegét mutatja, ami nem része a modnak. Hozd létre a **welcome.md** fájlt a modcsomag mappájában, itt:\n\n> %s\n\nMarkdown formátumban írd: címsorok (# és ##), felsorolás (-), **félkövér**, *dőlt* és [hivatkozások](https://modrinth.com). Más nyelvhez készíts **welcome.<nyelv>.md** fájlt is (például welcome.hu_hu.md). A szöveg alatti hivatkozásgombok (legfeljebb négy) ugyanebben a mappában az **en_us.json** fájl welcome.links részébe kerülnek. A változás a képernyő újbóli megnyitásakor látszik.",
 
   "settings.section.controls": "Nyelv és irányítás",
   "settings.languages": "Nyelvek…",

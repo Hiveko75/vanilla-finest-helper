@@ -13,12 +13,7 @@
   "title.look": "Look",
   "title.ready": "Ready to play",
 
-  "welcome.links": [
-    {"label": "Modrinth page", "url": "https://modrinth.com/modpack/vanilla-finest-survival"},
-    {"label": "Gallery", "url": "https://modrinth.com/modpack/vanilla-finest-survival/gallery"},
-    {"label": "Discord", "url": "https://discord.gg/4Mw9fQ83nf"}
-  ],
-  "welcome.missing": "## No welcome text yet\n\nThis page shows the modpack's own welcome text, which is not part of the mod. To add one, create **welcome.md** in this folder of the instance:\n\n> %s\n\nWrite it in Markdown: # and ## headings, - lists, **bold**, *italic* and [links](https://modrinth.com). For another language add **welcome.<language>.md** as well (for example welcome.hu_hu.md). Reopen this screen to see the change.",
+  "welcome.missing": "## No welcome text yet\n\nThis page shows the modpack's own welcome text, which is not part of the mod. To add one, create **welcome.md** in this folder of the instance:\n\n> %s\n\nWrite it in Markdown: # and ## headings, - lists, **bold**, *italic* and [links](https://modrinth.com). For another language add **welcome.<language>.md** as well (for example welcome.hu_hu.md). Link buttons under the text (up to four) go in **en_us.json** in the same folder, as welcome.links. Reopen this screen to see the change.",
 
   "settings.section.controls": "Language & Controls",
   "settings.languages": "Languages…",
