@@ -1,7 +1,6 @@
 # Changelog
 
 ## 1.0.0 (not released yet)
-- **Flashback 0.50.0** (26.3): checked and accepted by the Flashback module (replay folder).
 
 First version as the players' side of the Vanilla Finest modpacks. The earlier helper builds (never
 published) also held the fixes for the packs' mods; those moved to Vanilla Finest Fixes.
@@ -49,3 +48,4 @@ published) also held the fixes for the packs' mods; those moved to Vanilla Fines
   (2.x), Litematica, Flashback (Flashback Settings, or the Folders setting) and Axiom at the shared
   Minecraft folder (`.minecraft`, found like One World Folder finds it). It runs once per instance and
   keeps a folder the player already chose.
+- **Flashback 0.50.0** (26.3): checked and accepted by the Flashback module (replay folder).
