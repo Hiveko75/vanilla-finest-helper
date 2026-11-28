@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.0.0 (not released yet)
+- **Flashback 0.50.0** (26.3): checked and accepted by the Flashback module (replay folder).
 
 First version as the players' side of the Vanilla Finest modpacks. The earlier helper builds (never
 published) also held the fixes for the packs' mods; those moved to Vanilla Finest Fixes.
